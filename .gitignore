@@ -1,0 +1,16 @@
+node_modules/
+dist/
+release/
+data/
+*.log
+.agents/
+.aws/
+.codex/
+.env
+.env.*
+!.env.example
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
+*.zamar-backup
