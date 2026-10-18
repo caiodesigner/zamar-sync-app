@@ -258,21 +258,29 @@ Executar as tarefas na ordem das dependências. Cada tarefa deve produzir uma mu
 
 **Dependência:** etapa 3.
 
-- [ ] **4.1** Cadastrar, editar, pesquisar e arquivar músicas com gravação em disco. **Conclusão:** letras, seções e sequências criadas ou editadas reaparecem integralmente após fechar e reabrir o aplicativo.
-- [ ] **4.2** Editar seções e sequência, incluindo refrões repetidos. **Conclusão:** alterar refrão atualiza suas ocorrências previstas.
-- [ ] **4.3** Gerar slides com prévia e divisão manual. **Conclusão:** texto longo não é cortado silenciosamente.
-- [ ] **4.4** Apresentar, avançar, retroceder, ocultar texto e acionar tela preta. **Conclusão:** seleção na biblioteca não muda a saída ativa.
+- [x] **4.1** Cadastrar, editar, pesquisar e arquivar músicas com gravação em disco. **Conclusão:** letras, seções e sequências criadas ou editadas reaparecem integralmente após fechar e reabrir o aplicativo.
+- [x] **4.2** Editar seções e sequência, incluindo refrões repetidos. **Conclusão:** alterar refrão atualiza suas ocorrências previstas.
+- [x] **4.3** Gerar slides com prévia e divisão manual. **Conclusão:** texto longo não é cortado silenciosamente.
+- [x] **4.4** Apresentar, avançar, retroceder, ocultar texto e acionar tela preta. **Conclusão:** seleção na biblioteca não muda a saída ativa.
 
-**Marco:** uma música completa pode ser preparada e apresentada offline em dois monitores.
+**Entrega técnica 0.4.0:** tarefas 4.1 a 4.4 implementadas e verificadas por testes de domínio e interface. Evidências e roteiro em [etapa 4 — letras](etapa-4-letras.md). Salvamento é manual explícito nesta versão; o salvamento automático permanece previsto para recuperação na etapa 8.4.
+
+**Marco:** uma música completa pode ser preparada e apresentada offline em dois monitores. Fluxo externo verificado com monitor simulado; validação em hardware físico e execução Windows continuam pendentes nas etapas 1 e 9.
+
+**Contagem histórica ao entregar a etapa 4:** 14 de 44 tarefas principais concluídas; 30 pendentes. Restam seis etapas de implementação (5 a 10) e as pendências anteriores de 1 e 2.
 
 ### Etapa 5 — Adicionar programação e temas
 
 **Dependência:** etapa 4.
 
-- [ ] **5.1** Criar e salvar programação com reordenação por mouse e teclado. **Conclusão:** ordem preservada ao reiniciar.
-- [ ] **5.2** Implementar snapshots e atualização explícita. **Conclusão:** edição na biblioteca não modifica culto preparado sem comando.
-- [ ] **5.3** Criar temas com fundo sólido ou imagem e margens seguras. **Conclusão:** prévia corresponde à saída em 16:9 e 4:3.
-- [ ] **5.4** Adicionar textos livres. **Conclusão:** textos podem ser preparados e apresentados com as mesmas regras de segurança da letra.
+- [x] **5.1** Criar e salvar programação com reordenação por mouse e teclado. **Conclusão:** ordem preservada ao reiniciar.
+- [x] **5.2** Implementar snapshots e atualização explícita. **Conclusão:** edição na biblioteca não modifica culto preparado sem comando.
+- [x] **5.3** Criar temas com fundo sólido ou imagem e margens seguras. **Conclusão:** prévia corresponde à saída em 16:9 e 4:3.
+- [x] **5.4** Adicionar textos livres. **Conclusão:** textos podem ser preparados e apresentados com as mesmas regras de segurança da letra.
+
+**Entrega técnica 0.5.0:** tarefas 5.1 a 5.4 implementadas. Programações, textos e temas persistem; cópias independentes exigem atualização explícita; imagens locais entram no backup. Evidências e limites em [etapa 5](etapa-5-programacao-e-temas.md). Homologação física continua nas etapas 1 e 9.
+
+**Contagem atual:** 18 de 44 tarefas principais concluídas; 26 pendentes. Restam cinco etapas de desenvolvimento (6 a 10), além das pendências anteriores de 1 e 2.
 
 ### Etapa 6 — Adicionar Bíblia offline
 
@@ -299,7 +307,7 @@ Executar as tarefas na ordem das dependências. Cada tarefa deve produzir uma mu
 - [ ] **8.1** Importar texto e marcação de cifras do subconjunto aceito. **Conclusão:** prévia permite corrigir conteúdo antes de confirmar.
 - [ ] **8.2** Detectar duplicatas e permitir ignorar, criar cópia ou atualizar. **Conclusão:** nenhuma substituição silenciosa.
 - [ ] **8.3** Exportar e restaurar biblioteca completa. **Conclusão:** músicas, temas, programações e arquivos conferem após restauração.
-- [ ] **8.4** Simular fechamento inesperado e falha de disco. **Conclusão:** último estado confirmado preservado e recuperação explicada ao usuário.
+- [ ] **8.4** Implementar salvamento automático seguro de conteúdo válido, com indicador de gravação e tratamento de erro, e simular fechamento inesperado e falha de disco. **Conclusão:** último estado confirmado preservado e recuperação explicada ao usuário.
 
 ### Etapa 9 — Homologar usabilidade e desempenho
 

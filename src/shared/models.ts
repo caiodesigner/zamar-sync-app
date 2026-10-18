@@ -1,7 +1,7 @@
-export type EntityKind = 'song' | 'program' | 'theme' | 'bible-version';
+export type EntityKind = 'song' | 'text' | 'program' | 'theme' | 'bible-version';
 export type LibraryRecord = { id: string; kind: EntityKind; title: string; data: Record<string, unknown>; createdAt: string; updatedAt: string };
 export type Asset = { id: string; name: string; mediaType: string; sha256: string; size: number };
-export const entityKinds: readonly EntityKind[] = ['song', 'program', 'theme', 'bible-version'];
+export const entityKinds: readonly EntityKind[] = ['song', 'text', 'program', 'theme', 'bible-version'];
 export function validateKind(value: unknown): EntityKind {
   if (typeof value !== 'string' || !entityKinds.includes(value as EntityKind)) throw new Error('Tipo de conteúdo inválido.');
   return value as EntityKind;

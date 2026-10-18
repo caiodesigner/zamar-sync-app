@@ -1,6 +1,6 @@
 # Zamar Sync
 
-Protótipo 0.3.1 de aplicativo desktop offline para projeção de letras, Bíblia e cifras. Etapa 3: fundação de dados, migrações e backup/restauração entregues, com biblioteca de exemplos, busca, editor, prévia por blocos e programação temporária. SQLite preserva somente o texto do rascunho; biblioteca persistente, cifras estruturadas e Bíblia serão implementadas nas etapas seguintes.
+Versão 0.5.0 de aplicativo desktop offline para projeção de letras, Bíblia e cifras. A etapa 5 adiciona programações persistentes com cópias independentes, textos livres e temas com imagem local, fonte, cores, alinhamento, margens e proporções 16:9/4:3. A biblioteca musical e os controles da etapa 4 continuam disponíveis. Bíblia SQL e transposição de cifras pertencem às próximas etapas.
 
 ## Desenvolvimento
 
@@ -10,7 +10,7 @@ Requer Node.js 24 e npm no computador de desenvolvimento. O operador do pacote f
 2. Executar `npm run check` e `npm test`.
 3. Abrir com `npm start`. Caso o ambiente exporte `ELECTRON_RUN_AS_NODE`, remover essa variável antes de iniciar.
 4. Gerar AppImage e tar.gz Linux com `npm run pack:linux`, pasta de teste com `npm run pack:linux:dir` ou ZIP Windows x64 com `npm run pack:win`.
-5. Após gerar o pacote do sistema atual, executar `npm run test:electron` em sessão gráfica Windows ou Linux. O teste usa cópia temporária do pacote, sem modificar os dados do operador. Ele abre uma saída por alguns segundos e simula a remoção do monitor.
+5. Após gerar o pacote do sistema atual, executar `npm run test:electron` em sessão gráfica Windows ou Linux. O teste usa cópia temporária do pacote, sem modificar os dados do operador. A saída externa é simulada sem exibição nativa sobre o monitor do operador; o teste também verifica cadastro, reinício, backup e restauração.
 
 O processo de empacotamento pode precisar de rede para baixar o Electron da plataforma alvo. Isso não cria uma dependência de internet para o aplicativo empacotado.
 
@@ -42,22 +42,34 @@ Para testar os artefatos Linux: após `npm run pack:linux`, executar `ZAMAR_SMOK
 
 ## Testar a experiência atual
 
-Use os pacotes com versão 0.3.1 em `release` ou `npm start`. Não copie dados reais para o teste; use uma pasta nova ou um backup.
+Use os pacotes com versão 0.5.0 em `release` ou `npm start`. Não copie dados reais para o teste; use uma pasta nova ou um backup.
 
-Escolha um exemplo na biblioteca, prepare um bloco e use Apresentar na barra inferior. A busca filtra os exemplos. Adicionar conteúdo preparado cria uma programação desta sessão, com reordenação e remoção. Selecione um item para carregar uma cópia na preparação. Para persistir o corpo do rascunho, use Salvar texto; títulos e programação não são salvos nesta versão.
+Em Músicas, use Nova música, informe título e autor, edite a letra de cada seção e organize a ordem. Repetir seção selecionada reutiliza o mesmo refrão. Clique em Salvar música antes de trocar de conteúdo. A busca encontra título, autor e letra sem distinguir acentos. Arquivar música e Salvar música move o cadastro para Ver arquivadas; é possível desarquivar.
+
+Linha em branco ou uma linha contendo `---` divide slides manualmente; linhas extensas são quebradas e paginadas automaticamente. No modo apresentador, setas avançam/retrocedem a saída. Fora dele, preparam a prévia. Ocultar texto (O), Tela preta (B) e Apresentar são comandos explícitos. Escolher outra música ou editar não muda a saída.
+
+Na aba Textos, use + para cadastrar título e conteúdo e clique em Salvar texto. Abrir rascunho recupera o rascunho legado separadamente.
+
+Em Programação, informe um nome, adicione conteúdos e use Salvar programação. É possível guardar vários cultos e escolher em Abrir programação. A última programação salva ou aberta reaparece ao reiniciar. Arraste itens ou use os botões de subir/descer; Alt+↑/↓ no item também reordena.
+
+Cada item guarda uma cópia do conteúdo e do tema. Editar a biblioteca preserva o culto preparado e a saída ativa. Atualizar busca a versão salva na origem, mediante confirmação; depois salve a programação. Para alterar o tema de uma cópia, selecione o item, escolha outro tema e clique em Aplicar tema ao item. Apresentar continua sendo um comando separado.
+
+Na prévia, use Novo tema ou Editar tema. Escolha proporção, cores, fonte, tamanho, alinhamento e margens. Imagens PNG/JPEG são copiadas para a pasta de dados e entram nos backups. Salvar um tema apenas modifica a preparação; não muda a saída ativa. Ocultar texto preserva o fundo do tema, enquanto Tela preta apaga toda a imagem.
 
 Confira o [roteiro de voluntários da etapa 2](docs/etapa-2-experiencia.md). A importação bíblica e a transposição de cifras ainda não estão disponíveis. O botão da Bíblia explica o fluxo planejado.
 
 
-## Backup e restauração — 0.3.1
+## Backup e restauração — 0.5.0
 
-Abra Configurações, salve seu rascunho e use Criar backup para escolher um arquivo `.zamar-backup`. Para recuperar, use Restaurar backup e confirme a substituição. A aplicação cria uma cópia dos dados atuais antes da restauração e informa onde ela foi salva. A apresentação é encerrada e o conteúdo não volta automaticamente ao datashow.
+Salve seus conteúdos, temas e programações, abra Configurações e use Criar backup para escolher um arquivo `.zamar-backup`. Para recuperar, use Restaurar backup e confirme a substituição. A aplicação cria uma cópia dos dados atuais antes da restauração e informa onde ela foi salva. A apresentação é encerrada e o conteúdo não volta automaticamente ao datashow.
 
-A atualização reconhece o rascunho das versões anteriores e migra o banco com cópia prévia. Feche a versão antiga antes de abrir a nova e preserve sua pasta `data`. A limpeza de releases remove somente artefatos antigos; `release/data` é preservada. Biblioteca musical persistente será integrada à interface na etapa 4.
+A atualização reconhece o rascunho das versões anteriores e migra o banco com cópia prévia. Feche a versão antiga antes de abrir a nova e preserve sua pasta `data`. A limpeza de releases remove somente artefatos antigos; `release/data` é preservada. Músicas, textos, temas, imagens e programações entram no backup; registros antigos de formato desconhecido são preservados e sinalizados, sem conversão destrutiva.
+
+O esquema 2 amplia o banco para textos livres, com cópia anterior e migração transacional. Backups do esquema 1 continuam restauráveis na versão atual. Versões antigas recusam o banco atualizado; preserve seu backup antes de atualizar.
 
 Detalhes e limites em [dados e recuperação](docs/etapa-3-dados.md).
 
-A pasta release contém apenas os pacotes gerados 0.3.1 para distribuição e seus hashes, além das pastas de teste atuais e dos dados preservados. Para limpezas futuras após gerar e conferir os arquivos SHA-256, usar `node scripts/clean-release.cjs`.
+A pasta release contém apenas os pacotes gerados 0.5.0 para distribuição e seus hashes, além das pastas de teste atuais e dos dados preservados. Para limpezas futuras após gerar e conferir os arquivos SHA-256, usar `node scripts/clean-release.cjs`.
 
 
 ## Modo apresentador e datashow
@@ -65,3 +77,5 @@ A pasta release contém apenas os pacotes gerados 0.3.1 para distribuição e se
 Com uma tela, selecione Ensaio neste monitor e Iniciar apresentação. Apresentar e Tela preta alteram somente a simulação, mantendo os controles visíveis. Para usar o datashow, conecte-o em modo estendido (Windows: Win+P → Estender; Linux: saídas independentes nas configurações de telas) e selecione a saída externa. O modo espelhado mostra a mesma imagem nas duas telas. “Editar conteúdo” abre o editor durante a apresentação, sem alterar o conteúdo ao vivo; Esc ou Encerrar apresentação encerra a sessão.
 
 Ver [correção do modo apresentador](docs/ajuste-modo-apresentador.md).
+
+Detalhes da entrega atual e roteiro de aceitação em [etapa 5 — programação e temas](docs/etapa-5-programacao-e-temas.md). Histórico de letras em [etapa 4](docs/etapa-4-letras.md).

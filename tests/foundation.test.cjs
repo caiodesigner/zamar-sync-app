@@ -16,7 +16,7 @@ test('legacy migration preserves draft, creates recovery copy and refuses future
  db.prepare('INSERT INTO settings VALUES (?,?)').run('draft','Rascunho anterior');db.close();
  let store=new Store(root);assert.equal(store.read(),'Rascunho anterior');store.close();
  assert.equal(readdirSync(join(root,'backups')).filter(n=>n.endsWith('.sqlite')).length,1);
- db=new DatabaseSync(join(root,'zamar.sqlite'));assert.equal(db.prepare('PRAGMA user_version').get().user_version,1);db.exec('PRAGMA user_version=99');db.close();
+ db=new DatabaseSync(join(root,'zamar.sqlite'));assert.equal(db.prepare('PRAGMA user_version').get().user_version,2);db.exec('PRAGMA user_version=99');db.close();
  const before=readFileSync(join(root,'zamar.sqlite'));assert.throws(()=>new Store(root),/futura/);assert.deepEqual(readFileSync(join(root,'zamar.sqlite')),before);
 }));
 test('repositories persist aggregates with accents, repeated sections and independent kinds',()=>fixture(root=>{
@@ -68,7 +68,7 @@ test('unwritable directory fails without writing an alternative location',{skip:
 test('IPC version, text, and recoverable presentation are validated',()=>{
  for(const input of [undefined,null,[],{}, {version:2,payload:null}]) assert.throws(()=>requestPayload(input));
  assert.equal(requestPayload({version:1,payload:'ok'}),'ok');
- assert.deepEqual(initialPresentation(JSON.stringify({text:'Último slide',revision:12})),{text:'Último slide',revision:13,black:true,outputOpen:false,mode:'closed',status:'Saída fechada; conteúdo preservado para retomada explícita'});
+ assert.deepEqual(initialPresentation(JSON.stringify({text:'Último slide',revision:12})),{text:'Último slide',revision:13,theme:require('../dist/shared/content').DEFAULT_THEME,hidden:false,black:true,outputOpen:false,mode:'closed',status:'Saída fechada; conteúdo preservado para retomada explícita'});
  assert.equal(initialPresentation('{broken').text,'');
 });
 

@@ -115,3 +115,43 @@
 **Escopo:** correção da experiência das etapas anteriores, sem iniciar etapa 4. Contagem permanece 10/44 tarefas concluídas e 34 pendentes. Próxima etapa técnica: 4.
 
 **Entrega da correção:** pacotes 0.3.1 de Windows e Linux com hashes conferidos. Testes gráficos finais aprovados em pasta Linux, AppImage e tar.gz. Timeout de reabertura durante empacotamento não se reproduziu nas verificações finais. Artefatos 0.3.0 removidos, com dados preservados.
+
+
+## 18/10/2026 — Etapa 4: letras e biblioteca persistente
+
+**Autorização:** avançar para a próxima etapa do plano.
+
+**Implementação 0.4.0:** cadastro, edição, pesquisa por título/autor/letra sem distinção de acentos, arquivamento reversível, seções com IDs estáveis e sequência de referências. Refrões repetidos usam a mesma seção. Gravação manual validada no processo principal, com preservação de criação e confirmação de descarte.
+
+**Apresentação:** quebra manual e paginação automática, componente canônico comum à prévia/saída, avançar/retroceder no modo apresentador e ocultação de texto independente da tela preta. Editar ou selecionar na biblioteca preserva a saída. Ensaio continua sem janela adicional.
+
+**Verificação:** tipos, compilação e 20 testes unitários aprovados. Teste gráfico de desenvolvimento confirmou cadastro pela interface, reinício, refrão compartilhado, pesquisa, arquivamento/desarquivamento, navegação, ocultação, isolamento da saída e limites visuais dos slides longos. Regressões de rascunho e backup/restauração aprovadas. Resultado final dos pacotes em etapa-4-letras.md.
+
+**Conclusão técnica:** 4.1 a 4.4 concluídas. O marco com datashow físico e a execução Windows continuam sem homologação; monitor externo automatizado é simulado. Programação ainda temporária, Bíblia SQL e transposição permanecem nas etapas previstas. Salvamento automático acompanha recuperação em 8.4; não foi implicitamente declarado concluído.
+
+**Próximo passo:** etapa 5, programação persistente, snapshots, temas e textos livres.
+
+**Contagem:** 14/44 tarefas principais concluídas; 30 pendentes. Seis etapas futuras (5 a 10), além das pendências de homologação da etapa 1 e avaliação com voluntários da etapa 2.
+
+**Entrega e limpeza:** ZIP Windows e AppImage/tar.gz Linux 0.4.0 gerados e identificados por SHA-256. Testes gráficos finais aprovados nos três formatos Linux. Conteúdo compilado comparado aos arquivos embarcados dos dois sistemas; CRC do ZIP e fluxo gzip/tar validados. Seis artefatos 0.3.1 removidos, com `release/data` preservada. Captura em etapa-4-preview.png; hashes e comando de geração em etapa-4-letras.md.
+
+
+## 18/10/2026 — Etapa 5: programação, temas e textos
+
+**Autorização:** avançar para a próxima etapa, após a entrega de letras.
+
+**Implementação 0.5.0:** programações nomeadas, ordem por arraste/botões/teclado, recuperação da última programação e confirmação de descarte. Cada item guarda texto e tema independentes, com atualização de conteúdo a partir da origem e aplicação de tema por comandos explícitos. Textos livres têm cadastro e busca próprios; rascunho legado preservado.
+
+**Temas:** fundo sólido ou imagem PNG/JPEG copiada para os dados, escurecimento, fonte, tamanho, alinhamento, margens e proporções 16:9/4:3. Prévia e saída compartilham geometria/paginação. Ocultar texto mantém o fundo; tela preta apaga tudo. Imagens são normalizadas e fornecidas por protocolo local restrito.
+
+**Dados:** migração transacional para esquema 2 com cópia anterior, acrescentando tipo text. Restauração aceita backups dos esquemas 1 e 2 e exige correspondência com a versão do banco. Programações, temas, textos e imagens entram nos backups atuais.
+
+**Verificação:** tipos, compilação e 25 testes unitários aprovados. Teste gráfico de desenvolvimento confirmou cadastro/reabertura de textos e programação, reordenação por mouse e teclado, isolamento das cópias, atualização explícita, imagem após remoção do original, ocultação com fundo, equivalência da prévia/projeção simulada em 4:3, saída 16:9 e backup/restauração. Resultados dos pacotes finais registrados em etapa-5-programacao-e-temas.md.
+
+**Conclusão técnica:** 5.1 a 5.4 concluídas; execução Windows, datashow físico e voluntários permanecem pendentes. Salvamento continua manual; programação e edição da biblioteca não atualizam a saída sem comando.
+
+**Próximo passo:** etapa 6, importação/cadastro de Bíblia SQL e consulta offline, conforme contrato existente.
+
+**Contagem:** 18/44 tarefas principais concluídas, 26 pendentes. Cinco etapas seguintes (6 a 10), além das pendências anteriores de 1 e 2.
+
+**Entrega e limpeza:** pacotes 0.5.0 Windows ZIP, Linux AppImage e tar.gz gerados, com SHA-256. Testes finais aprovados nos três formatos Linux. Verificados conteúdo embarcado de ambos os sistemas, CRC do ZIP e fluxo gzip/tar. Layout 4:3 no apresentador ajustado para manter prévia e itens acessíveis acima dos controles; teste de ocultação aguarda a pintura da interface após IPC. Seis arquivos 0.4.0 removidos e `release/data` preservada. Evidências e hashes em etapa-5-programacao-e-temas.md; captura em etapa-5-preview.png.

@@ -5,7 +5,7 @@ import { createHash, randomUUID } from 'node:crypto';
 import { gzipSync, gunzipSync } from 'node:zlib';
 import { acquireStoreLock } from './lock';
 import { type Asset, type EntityKind, type LibraryRecord, validateKind, validateRecord } from '../shared/models';
-const VERSION = 1;
+const VERSION = 2;
 const MAX_BYTES = 128 * 1024 * 1024;
 const hash = (data: Buffer) => createHash('sha256').update(data).digest('hex');
 const digestPattern = /^[a-f0-9]{64}$/;
@@ -37,8 +37,14 @@ export class Store {
           this.snapshot(join(directory, 'backups', `migration-${Date.now()}-${randomUUID()}.sqlite`));
         }
         this.transaction(() => {
-          this.db.exec("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL); CREATE TABLE records (kind TEXT NOT NULL CHECK(kind IN ('song','program','theme','bible-version')), id TEXT NOT NULL, title TEXT NOT NULL, payload TEXT NOT NULL CHECK(json_valid(payload)), created_at TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY(kind,id)); CREATE INDEX records_title ON records(kind,title COLLATE NOCASE); CREATE TABLE assets (id TEXT PRIMARY KEY, name TEXT NOT NULL, media_type TEXT NOT NULL, sha256 TEXT NOT NULL, size INTEGER NOT NULL CHECK(size >= 0)); PRAGMA user_version=1;");
+          this.db.exec("CREATE TABLE IF NOT EXISTS settings (key TEXT PRIMARY KEY, value TEXT NOT NULL); CREATE TABLE records (kind TEXT NOT NULL CHECK(kind IN ('song','text','program','theme','bible-version')), id TEXT NOT NULL, title TEXT NOT NULL, payload TEXT NOT NULL CHECK(json_valid(payload)), created_at TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY(kind,id)); CREATE INDEX records_title ON records(kind,title COLLATE NOCASE); CREATE TABLE assets (id TEXT PRIMARY KEY, name TEXT NOT NULL, media_type TEXT NOT NULL, sha256 TEXT NOT NULL, size INTEGER NOT NULL CHECK(size >= 0)); PRAGMA user_version=2;");
         });
+      }
+      if (version === 1) {
+        this.checkDatabase(this.db, true);
+        mkdirSync(join(directory, 'backups'), { recursive: true });
+        this.snapshot(join(directory, 'backups', `migration-${Date.now()}-${randomUUID()}.sqlite`));
+        this.transaction(() => this.db.exec("ALTER TABLE records RENAME TO records_v1; DROP INDEX records_title; CREATE TABLE records (kind TEXT NOT NULL CHECK(kind IN ('song','text','program','theme','bible-version')), id TEXT NOT NULL, title TEXT NOT NULL, payload TEXT NOT NULL CHECK(json_valid(payload)), created_at TEXT NOT NULL, updated_at TEXT NOT NULL, PRIMARY KEY(kind,id)); INSERT INTO records SELECT * FROM records_v1; DROP TABLE records_v1; CREATE INDEX records_title ON records(kind,title COLLATE NOCASE); PRAGMA user_version=2;"));
       }
       this.checkDatabase(this.db);
       mkdirSync(join(directory, 'assets'), { recursive: true });
@@ -48,8 +54,8 @@ export class Store {
     this.db.exec('BEGIN IMMEDIATE');
     try { action(); this.db.exec('COMMIT'); } catch (error) { this.db.exec('ROLLBACK'); throw error; }
   }
-  private checkDatabase(db: DatabaseSync) {
-    if (Number(db.prepare('PRAGMA user_version').get()!.user_version) !== VERSION || db.prepare('PRAGMA integrity_check').get()!.integrity_check !== 'ok') throw new Error('Banco incompatível ou corrompido. Nenhum dado foi substituído.');
+  private checkDatabase(db: DatabaseSync, legacy = false) {
+    if (!(legacy ? [1,VERSION] : [VERSION]).includes(Number(db.prepare('PRAGMA user_version').get()!.user_version)) || db.prepare('PRAGMA integrity_check').get()!.integrity_check !== 'ok') throw new Error('Banco incompatível ou corrompido. Nenhum dado foi substituído.');
     const schema = db.prepare("SELECT type,name,sql FROM sqlite_schema WHERE name NOT LIKE 'sqlite_%'").all();
     const expected = new Set(['settings', 'records', 'assets', 'records_title']);
     if (schema.length !== expected.size || schema.some(row => !expected.has(String(row.name)) || !['table','index'].includes(String(row.type)) || /VIRTUAL/i.test(String(row.sql)))) throw new Error('Estrutura de banco não reconhecida.');
@@ -85,6 +91,16 @@ export class Store {
     this.db.prepare('INSERT INTO assets VALUES (?,?,?,?,?)').run(asset.id, asset.name, asset.mediaType, asset.sha256, asset.size);
     return asset;
   }
+  imageBytes(digest: string): Buffer {
+    if (typeof digest !== 'string' || !digestPattern.test(digest)) throw new Error('Imagem inválida.');
+    const asset = this.assets().find(a => a.sha256 === digest && a.mediaType === 'image/png');
+    if (!asset || asset.size > 10 * 1024 * 1024) throw new Error('Imagem não encontrada.');
+    const path = join(this.directory, 'assets', digest);
+    if (statSync(path).size !== asset.size) throw new Error('Imagem corrompida.');
+    const bytes = readFileSync(path);
+    if (bytes.length !== asset.size || hash(bytes) !== digest) throw new Error('Imagem corrompida.');
+    return bytes;
+  }
   private assets(db = this.db): Asset[] { return db.prepare('SELECT * FROM assets').all().map(row => ({ id: String(row.id), name: String(row.name), mediaType: String(row.media_type), sha256: String(row.sha256), size: Number(row.size) })); }
   createBackup(destination: string): void {
     if (typeof destination !== 'string' || !destination.endsWith('.zamar-backup')) throw new Error('Escolha um arquivo com extensão .zamar-backup.');
@@ -110,7 +126,7 @@ export class Store {
     let value;
     try { value = JSON.parse(gunzipSync(readFileSync(source), { maxOutputLength: MAX_BYTES * 2 }).toString('utf8')); }
     catch { throw new Error('Backup inválido, corrompido ou sem permissão de leitura. Nenhum dado foi substituído.'); }
-    if (value?.format !== 'zamar-backup' || value.version !== 1 || value.schemaVersion !== VERSION || !Array.isArray(value.files) || value.files.length > 10000) throw new Error('Formato ou versão de backup incompatível.');
+    if (value?.format !== 'zamar-backup' || value.version !== 1 || ![1,VERSION].includes(value.schemaVersion) || !Array.isArray(value.files) || value.files.length > 10000) throw new Error('Formato ou versão de backup incompatível.');
     const decode = (entry: unknown) => {
       if (!entry || typeof entry !== 'object') throw new Error('Entrada de backup inválida.');
       const item = entry as { sha256: string; data: string };
@@ -134,7 +150,8 @@ export class Store {
       writeFileSync(staging, database, { flag: 'wx', mode: 0o600 });
       imported = new DatabaseSync(staging, { readOnly: true, allowExtension: false });
       imported.exec('PRAGMA trusted_schema=OFF');
-      this.checkDatabase(imported);
+      this.checkDatabase(imported, true);
+      if (Number(imported.prepare('PRAGMA user_version').get()!.user_version) !== value.schemaVersion) throw new Error('Versão do manifesto não confere com o banco.');
       const records = imported.prepare('SELECT * FROM records').all().map(row => this.record(row));
       const settings = imported.prepare('SELECT key,value FROM settings').all();
       for (const row of settings) { if (typeof row.key !== 'string' || row.key.length > 100 || typeof row.value !== 'string' || row.value.length > 1_000_000) throw new Error('Configuração de backup inválida.'); }

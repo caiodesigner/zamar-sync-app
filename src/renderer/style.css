@@ -5,3 +5,21 @@
 @media(min-width:1101px){.editor,.preview-panel{padding:16px}.editor textarea{height:110px}.editor .section-heading{margin-bottom:12px}.prepared{aspect-ratio:auto;min-height:150px;height:150px}}
 
 .presentation-notice{font-size:12px;line-height:1.65;color:var(--muted);padding:10px 14px;border:1px solid var(--border);border-radius:8px;margin-bottom:16px;background:#152033}.operator.presenting .workspace{grid-template-columns:minmax(0,1.35fr) minmax(300px,1fr)}.operator.presenting .library,.operator.presenting .editor,.operator.presenting .session-notice{display:none}.operator.presenting .right-column{grid-column:auto;grid-template-columns:1fr}.operator.presenting .live-panel{grid-row:1}.operator.presenting .prepared{height:260px;min-height:200px;aspect-ratio:auto}.operator.presenting .live-preview{font-size:22px;min-height:180px}.operator.presenting .preview-panel h2{font-size:22px}@media(max-width:700px){.operator.presenting .workspace{display:flex}.operator.presenting .right-column{display:flex;flex-direction:column}.operator.presenting .live-panel{order:-1}.operator.presenting .prepared{height:180px}}
+/* Canonical slide layout shared by preparation, live monitor and output. */
+.slide-surface{position:relative;width:100%;height:100%;min-height:0;overflow:hidden;background:#000;color:#fff}
+.slide-canvas{position:absolute;left:50%;top:50%;width:1600px;height:900px;box-sizing:border-box;padding:96px;display:flex;align-items:center;justify-content:center;white-space:pre-wrap;overflow-wrap:anywhere;text-align:center;font-family:'DejaVu Sans Mono','Courier New',monospace;line-height:1.25;font-weight:400;transform-origin:center}
+.projection>.slide-surface{position:absolute;inset:0;width:100vw;height:100vh}
+.preview:has(.slide-surface){padding:0;display:block;aspect-ratio:16/9;height:auto;min-height:140px}
+.field{display:flex;flex-direction:column;gap:6px;margin:12px 0}.field input{width:100%;box-sizing:border-box}.field textarea{min-height:180px}
+.section-tabs{display:flex;gap:6px;flex-wrap:wrap}.section-tabs [aria-pressed=true]{border-color:var(--focus);background:var(--accent)}
+.sequence-list{padding-left:24px}.sequence-list li{display:flex;align-items:center;gap:5px;margin:6px 0}.sequence-list li span{flex:1}.sequence-list button{padding:5px 10px}
+.status-bar{flex-wrap:wrap}.presentation-actions{flex-shrink:0}
+.field input{padding:10px 12px;background:#111a28;color:var(--text);border:1px solid #52627b;border-radius:8px;font-size:14px}
+.library-item>span:nth-child(2){margin-left:0;flex:1}
+.preparation,.preview-panel,.right-column,.slide-strip{min-width:0;max-width:100%}
+.theme-fields{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}.theme-fields input[type=color]{min-height:42px;padding:4px}.theme-preview{margin:16px 0;min-height:220px}.theme-picker{display:flex;gap:8px;align-items:end;flex-wrap:wrap;margin-bottom:18px}.theme-picker label{display:grid;gap:6px;flex:1;font-size:12px}.theme-picker select{width:100%;max-width:100%}.theme-picker button{font-size:11px;padding:8px}.queue-list li[draggable]{cursor:grab}.queue-list li:active{cursor:grabbing}.schedule .editor-actions{flex-wrap:wrap}.schedule select,.field select{max-width:100%;width:100%}.queue-tools{flex-wrap:wrap}.preview:has(.slide-surface){min-height:0}.operator.presenting .prepared{height:auto;min-height:0;aspect-ratio:16/9}.preview.theme-preview{padding:0;display:block}
+/* Keep cues and both monitors visible while presenting, including 4:3 themes. */
+.operator.presenting .theme-picker{display:none}
+.operator.presenting .prepared{height:clamp(180px,calc(100vh - 460px),360px);min-height:0}
+.operator.presenting .live-preview{height:180px;min-height:0}
+.operator.presenting .schedule>.field,.operator.presenting .schedule>.editor-actions,.operator.presenting .schedule>.add-queue,.operator.presenting .schedule>.hint,.operator.presenting .schedule>.empty-state{display:none}
