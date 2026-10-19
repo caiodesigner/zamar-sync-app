@@ -100,3 +100,10 @@ Limpeza concluída: seis arquivos 0.5.0 removidos, mantendo pacotes 0.6.0, hashe
 Windows não foi executado. O roteamento externo foi verificado com monitor simulado, sem fullscreen/exibição nativos sobre o monitor real. Nenhuma avaliação com voluntários ou homologação de datashow físico foi inferida desses testes.
 
 Nota de histórico: os pacotes 0.6.0 foram substituídos na pasta release pelos da etapa 7; os hashes acima registram a entrega anterior.
+
+
+## Ampliação — importação SQLite
+
+O seletor aceita `.sqlite`, `.sqlite3` e `.db`, além de `.sql`. O cabeçalho do conteúdo identifica o banco SQLite. O worker lê uma cópia temporária, com conexão somente para leitura, extensões desabilitadas e esquema não confiável. Somente tabelas comuns e colunas simples são lidas; views, tabelas virtuais e triggers não são executados. Colunas geradas e BLOBs não são suportados. Nomes de tabela/coluna são delimitados como identificadores. Limites: 50 MiB, 20 tabelas, 32 colunas por tabela, 110 mil linhas no total e 20 mil caracteres por campo.
+
+Use um arquivo completo exportado com o programa de origem fechado; arquivos WAL/SHM externos não integram a cópia. Bancos criptografados e esquemas que não representem uma tradução por arquivo não são suportados. O usuário confere o mapeamento de livros/capítulos/versículos/texto, a ordem numérica dos livros e a cobertura antes de confirmar. O corpus normalizado entra na persistência e nos backups existentes; o arquivo original pode ser removido após importar.

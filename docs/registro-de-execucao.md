@@ -251,3 +251,12 @@
 **Implementação:** cores da interface centralizadas em variáveis CSS, com fundos claros, texto escuro e destaque neutro na variante clara. Botão acessível indica a próxima ação. Preferência `interface-theme` persistida no SQLite existente, sem migração de esquema, por IPC validado e exclusivo do operador; recuperada na inicialização. Falhas de gravação são exibidas e preservam a seleção anterior. As cores dos slides e o estado da apresentação permanecem independentes.
 
 **Verificação:** tipos e compilação aprovados; teste gráfico Linux em modo de desenvolvimento com sandbox habilitado confirma alternância, recuperação da preferência após recarga, rejeição de valor inválido e preservação do snapshot público. Qualificação de teclado, zoom e contraste do tema escuro aprovada. Pacotes em `release` ainda correspondem à entrega anterior e precisam ser regenerados para distribuir esta melhoria.
+
+
+## 19/10/2026 — Importação de Bíblia em SQLite
+
+**Objetivo:** aceitar `.sqlite`, `.sqlite3` e `.db` no cadastro existente, preservando SQL e a confirmação de prévia.
+
+**Implementação:** reconhecimento pelo cabeçalho, cópia temporária isolada com limpeza pelo controlador, leitura SQLite somente de tabelas comuns com limites e identificação segura de colunas. Sem execução de scripts de esquema, views, triggers ou extensões. O arquivo original permanece intacto. Mapeamento, duplicatas, confirmação, persistência do corpus e backup continuam compartilhados com a importação SQL.
+
+**Verificação:** tipos e build aprovados; suíte de domínio aprovada, incluindo novos cenários SQLite com tabela relacionada de livros, acentuação, consulta após remoção da origem, preservação byte a byte, rejeição de colunas geradas, BLOBs e banco corrompido sem cadastro parcial. Pacotes de distribuição precisam ser regenerados para incluir o recurso.

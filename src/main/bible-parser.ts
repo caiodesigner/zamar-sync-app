@@ -1,3 +1,4 @@
+import { DatabaseSync } from 'node:sqlite';
 import type { SqlDump, SqlTable, BibleMapping, BiblePreview, Verse } from '../shared/bible';
 import { bookNumber, validateVerses } from '../shared/bible';
 type Token={value:string;kind:'word'|'string'|'number'|'symbol'|'end';line:number};
@@ -69,4 +70,32 @@ export function mapDump(dump:SqlDump,m:BibleMapping):{rows:Verse[];preview:Bible
  const countBooks=new Set(rows.map(r=>r.book)).size;if(countBooks<66)warnings.push(`${66-countBooks} livro(s) da ordem canônica de 66 livros não estão presentes.`);
  warnings.push('Cobertura não certificada: finais de capítulos e diferenças de versificação devem ser conferidos na fonte. Confirme o uso de conteúdo parcial ou não certificado.');
  return {rows,preview:{count:rows.length,books:countBooks,chapters:chapters.size,warnings,errors,unresolved:[...unresolved].slice(0,100),samples:rows.length?[rows[0],rows[Math.floor(rows.length/2)],rows[rows.length-1]]:[],partial:true,originalNames:[...originals].slice(0,100)}};
+}
+
+// Read ordinary tables only; schema SQL, views, triggers and extensions are never executed.
+export function readSqlite(path:string):SqlTable[] {
+ const db=new DatabaseSync(path,{readOnly:true,allowExtension:false});
+ try {
+  db.exec('PRAGMA trusted_schema=OFF; PRAGMA query_only=ON');
+  const schema=db.prepare("SELECT name,type FROM pragma_table_list WHERE schema='main' AND name NOT LIKE 'sqlite_%'").all();
+  const ordinary=schema.filter(t=>t.type==='table');
+  if(!ordinary.length || ordinary.length>20)throw new Error('O banco deve conter entre 1 e 20 tabelas comuns. Views e tabelas virtuais não são importadas.');
+  const quote=(name:string)=>'"'+name.replaceAll('"','""')+'"';
+  const tables:SqlTable[]=[];let count=0;
+  for(const entry of ordinary){
+   const name=String(entry.name);
+   const info=db.prepare('SELECT name,hidden FROM pragma_table_xinfo(?)').all(name);
+   if(info.some(c=>c.hidden!==0))throw new Error('Colunas geradas ou ocultas não são suportadas.');
+   const columns=info.map(c=>String(c.name));
+   if(!columns.length || columns.length>32)throw new Error('Tabela com quantidade de colunas não suportada.');
+   const rows:(string|number)[][]=[];
+   for(const row of db.prepare(`SELECT ${columns.map(quote).join(',')} FROM ${quote(name)} LIMIT 110001`).iterate()){
+    if(++count>110000)throw new Error('Mais de 110 mil linhas no arquivo.');
+    rows.push(columns.map(c=>{const value=row[c];if(value===null)return '';if(typeof value==='string' && value.length<=20000)return value;if(typeof value==='number' && Number.isSafeInteger(value))return value;throw new Error('O banco contém valores não suportados (BLOB, real ou texto excessivo).');}));
+   }
+   tables.push({name,columns,rows});
+  }
+  if(!count)throw new Error('O banco não contém dados.');
+  return tables;
+ }finally{db.close();}
 }

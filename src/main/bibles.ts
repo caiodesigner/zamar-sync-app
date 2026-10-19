@@ -1,7 +1,8 @@
 import { DatabaseSync } from 'node:sqlite';
 import { Worker } from 'node:worker_threads';
-import { mkdirSync,existsSync,renameSync,rmSync } from 'node:fs';
+import { mkdirSync,existsSync,renameSync,rmSync,mkdtempSync } from 'node:fs';
 import { join } from 'node:path';
+import { tmpdir } from 'node:os';
 import { gzipSync,gunzipSync } from 'node:zlib';
 import { randomUUID,createHash } from 'node:crypto';
 import { Store } from './storage';
@@ -20,7 +21,7 @@ export class Bibles {
    worker.once('message',m=>finish(m.ok?null:new Error(m.error),m.result));worker.once('error',error=>finish(error instanceof Error?error:new Error(String(error))));worker.once('exit',()=>finish(new Error('Leitura interrompida sem conclusão.')));
   });
  }
- async select(path:string):Promise<SqlSelection>{this.cancel();const generation=this.generation;const dump=await this.run<SqlDump>({action:'parse',path});if(generation!==this.generation)throw new Error('Importação cancelada.');const token=randomUUID();this.stage={token,dump};return {token,filename:dump.filename,hash:dump.hash,tables:dump.tables.map(t=>({name:t.name,columns:t.columns,count:t.rows.length})),mapping:suggestMapping(dump.tables)};}
+ async select(path:string):Promise<SqlSelection>{this.cancel();const generation=this.generation;const temporary=mkdtempSync(join(tmpdir(),'zamar-bible-read-'));let dump:SqlDump;try{dump=await this.run<SqlDump>({action:'parse',path,temporary});}finally{rmSync(temporary,{recursive:true,force:true});}if(generation!==this.generation)throw new Error('Importação cancelada.');const token=randomUUID();this.stage={token,dump};return {token,filename:dump.filename,hash:dump.hash,tables:dump.tables.map(t=>({name:t.name,columns:t.columns,count:t.rows.length})),mapping:suggestMapping(dump.tables)};}
  async preview(token:string,mapping:BibleMapping):Promise<BiblePreview>{const stage=this.require(token);stage.rows=undefined;stage.preview=undefined;const generation=this.generation;const result=await this.run<{rows:Verse[];preview:BiblePreview}>({action:'map',dump:stage.dump,mapping});if(generation!==this.generation)throw new Error('Importação cancelada.');stage.rows=result.rows;stage.preview=result.preview;return result.preview;}
  private require(token:string){if(!this.stage || token!==this.stage.token)throw new Error('Selecione e confira novamente o arquivo.');return this.stage;}
  catalog():{versions:BibleMeta[];defaultId:string|null;skipped:number}{const versions:BibleMeta[]=[];let skipped=0;for(const record of this.store.list('bible-version')){try{versions.push(validateMeta(record.data));}catch{skipped++;}}return {versions,defaultId:this.store.getSetting('default-bible')??null,skipped};}

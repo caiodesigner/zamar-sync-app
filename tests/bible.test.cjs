@@ -17,3 +17,28 @@ test('cancelled or failed imports preserve library and remove unregistered corpu
 test('every scripture slide retains reference/version/attribution and snapshots validate',()=>{const p={versionId:'syn',name:'Sintética',abbreviation:'SYN',attribution:'Demonstração',verses:[{book:43,chapter:3,verse:16,text:'Palavra '.repeat(100)}]};const pages=passageSlides(p,DEFAULT_THEME);assert(pages.length>1);assert(pages.every(s=>s.includes('SYN') && s.includes('3:16') && s.includes('Demonstração')));assert.doesNotThrow(()=>validateProgram({id:'p',title:'t',items:[{id:'i',title:'Passagem',text:'x',source:{kind:'bible',id:'syn'},theme:DEFAULT_THEME,scripture:p}]}));});
 test('a full-size synthetic corpus remains indexed and queryable offline',async()=>{const root=mkdtempSync(join(tmpdir(),'zamar-biblia-grande-'));const store=new Store(root),bibles=new Bibles(store);try{const file=join(root,'large.sql');const values=[];for(let book=1;book<=66;book++)for(let chapter=1;chapter<=2;chapter++)for(let verse=1;verse<=240;verse++)values.push(`(${book},${chapter},${verse},'Conteúdo sintético ${book}:${chapter}:${verse} coração.')`);writeFileSync(file,`CREATE TABLE verses(book INTEGER,chapter INTEGER,verse INTEGER,text TEXT);INSERT INTO verses VALUES ${values.join(',')};`);const selected=await bibles.select(file);selected.mapping.canonicalNumbers=true;const preview=await bibles.preview(selected.token,selected.mapping);assert.equal(preview.count,31680);assert.equal(preview.books,66);const meta=bibles.import(selected.token,fields,'new',null,true);rmSync(file);assert.match(bibles.passage(meta.id,'Ap 2:240').verses[0].text,/66:2:240/);const results=bibles.query(meta.id,{search:'coracao'});assert.equal(results.verses.length,200);assert.equal(results.truncated,true);}finally{bibles.cancel();store.close();rmSync(root,{recursive:true,force:true});}});
 test('explicit copies have independent identity and replacement preserves the chosen default',async()=>{const root=mkdtempSync(join(tmpdir(),'zamar-biblia-copy-'));const store=new Store(root),bibles=new Bibles(store);try{const file=join(root,'copy.sql');writeFileSync(file,sql);async function ready(){const s=await bibles.select(file);await bibles.preview(s.token,s.mapping);return s.token;}const a=bibles.import(await ready(),fields,'new',null,true);const b=bibles.import(await ready(),{...fields,name:'Segunda tradução',abbreviation:'SYN2'},'copy',a.id,true);assert.notEqual(a.id,b.id);assert.notEqual(a.createdAt,b.createdAt);assert.equal(bibles.catalog().defaultId,a.id);bibles.import(await ready(),{...fields,name:'Segunda tradução',abbreviation:'SYN2'},'replace',b.id,true);assert.equal(bibles.catalog().defaultId,a.id);bibles.setDefault(b.id);assert.equal(bibles.catalog().defaultId,b.id);bibles.remove(b.id);assert.equal(bibles.catalog().defaultId,a.id);}finally{bibles.cancel();store.close();rmSync(root,{recursive:true,force:true});}});
+
+test('SQLite Bible is previewed and imported from a read-only snapshot without changing its source',async()=>{
+ const {DatabaseSync}=require('node:sqlite');const {readFileSync}=require('node:fs');
+ const root=mkdtempSync(join(tmpdir(),'zamar-sqlite-bible-'));const store=new Store(join(root,'data')),bibles=new Bibles(store);
+ try{
+  const file=join(root,'biblia.sqlite');const db=new DatabaseSync(file);
+  db.exec('CREATE TABLE books(id INTEGER,name TEXT); CREATE TABLE verses(book_id INTEGER,chapter INTEGER,verse INTEGER,text TEXT); CREATE VIEW ignored AS SELECT * FROM verses;');
+  db.prepare('INSERT INTO books VALUES (?,?)').run(43,'João');db.prepare('INSERT INTO verses VALUES (?,?,?,?)').run(43,3,16,'Texto sintético com acentuação');db.close();
+  const original=readFileSync(file);const selected=await bibles.select(file);
+  assert.equal(selected.tables.some(t=>t.name==='ignored'),false);
+  const preview=await bibles.preview(selected.token,selected.mapping);assert.equal(preview.count,1);assert.deepEqual(preview.errors,[]);
+  const meta=bibles.import(selected.token,fields,'new',null,true);
+  assert.deepEqual(readFileSync(file),original);rmSync(file);
+  assert.equal(bibles.passage(meta.id,'Jo 3:16').verses[0].text,'Texto sintético com acentuação');
+ }finally{bibles.cancel();store.close();rmSync(root,{recursive:true,force:true});}
+});
+test('SQLite rejects generated columns and unsupported binary values; corrupt files do not modify the library',async()=>{
+ const {DatabaseSync}=require('node:sqlite');const {readSqlite}=require('../dist/main/bible-parser');
+ const root=mkdtempSync(join(tmpdir(),'zamar-sqlite-invalid-'));const store=new Store(join(root,'data')),bibles=new Bibles(store);
+ try{
+  const generated=join(root,'generated.sqlite');let db=new DatabaseSync(generated);db.exec('CREATE TABLE x(a INTEGER,b INTEGER GENERATED ALWAYS AS (a+1));');db.close();assert.throws(()=>readSqlite(generated),/geradas/);
+  const binary=join(root,'binary.sqlite');db=new DatabaseSync(binary);db.exec("CREATE TABLE x(a BLOB); INSERT INTO x VALUES (x'00');");db.close();assert.throws(()=>readSqlite(binary),/BLOB/);
+  const corrupt=join(root,'bad.sqlite');writeFileSync(corrupt,Buffer.concat([Buffer.from('SQLite format 3\0'),Buffer.alloc(200)]));await assert.rejects(bibles.select(corrupt));assert.equal(bibles.catalog().versions.length,0);
+ }finally{bibles.cancel();store.close();rmSync(root,{recursive:true,force:true});}
+});
