@@ -11,7 +11,7 @@ test('song sections, sequence, archive and timestamps survive reopen and backup'
  const root=mkdtempSync(join(tmpdir(),'zamar-musicas-')); let store;
  try { store=new Store(join(root,'data'));let s=song();store.put(songRecord(s));const created=store.list('song')[0].createdAt;store.close();store=new Store(join(root,'data'));assert.deepEqual(readSong(store.list('song')[0]),s);
  s.sections[1].text='Refrão editado';s.archived=true;const updated=songRecord(s,store.list('song')[0]);store.put(updated);assert.equal(updated.createdAt,created);
- const file=join(root,'songs.zamar-backup');store.createBackup(file);s.title='Mudança';store.put(songRecord(s));store.restoreBackup(file);
+ const file=join(root,'songs.json');store.createBackup(file);s.title='Mudança';store.put(songRecord(s));store.restoreBackup(file);
  assert.equal(readSong(store.list('song')[0]).title,'Canção');assert.equal(readSong(store.list('song')[0]).archived,true);
  const restored=readSong(store.list('song')[0]);assert.deepEqual(restored.sequence.map(id=>restored.sections.find(s=>s.id===id).text),['Início','Refrão editado','Refrão editado']);
  } finally {store?.close();rmSync(root,{recursive:true,force:true});}

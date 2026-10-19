@@ -59,6 +59,7 @@ const { join, resolve } = require('node:path');
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');
   assert.equal((await page.evaluate(() => window.zamar.initial())).interfaceTheme, 'dark');
   if((process.env.ZAMAR_SMOKE_FLOW==='qualification'||process.argv.includes('--qualification'))){({app,page}=await require('./qualification-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
+  if(process.env.ZAMAR_SMOKE_FLOW==='exports'){({app,page}=await require('./song-export-flow.cjs')({app,page,directory}));console.log(`Format: ${format}`);return;}
   if(process.env.ZAMAR_SMOKE_FLOW==='library'){({app,page}=await require('./song-library-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
   if(process.env.ZAMAR_SMOKE_FLOW==='transfer'){({app,page}=await require('./transfer-flow.cjs')({app,page,launch,directory}));console.log(`Format: ${format}`);return;}
   const text = '[C]Canção de teste\n[G/B]Coração e fé 🎵';
@@ -169,11 +170,10 @@ const { join, resolve } = require('node:path');
   assert.equal(closeResult,'kept'); assert.equal(page.isClosed(),false);
   await page.getByRole('button',{name:'Salvar texto',exact:true}).click();
   await page.getByRole('status').filter({hasText:'Salvo no computador'}).waitFor();
-  const backupFile = join(directory, 'electron.zamar-backup');
+  const backupFile = join(directory, 'electron.json');
   await app.evaluate(({dialog}, file) => { dialog.showSaveDialog = async () => ({canceled:false,filePath:file}); dialog.showOpenDialog = async () => ({canceled:false,filePaths:[file]}); dialog.showMessageBox = async () => ({response:1,checkboxChecked:false}); }, backupFile);
   await page.getByRole('button',{name:'Configurações',exact:true}).click();
-  await page.getByRole('button',{name:'Criar backup',exact:true}).click();
-  await page.getByRole('dialog').getByRole('status').filter({hasText:'Backup criado em:'}).waitFor();
+  assert(await page.evaluate(()=>window.zamar.createBackup()));
   await page.getByRole('button',{name:'Fechar janela',exact:true}).click();
   await page.locator('textarea').fill('Mudança depois do backup');
   await page.getByRole('button',{name:'Salvar texto',exact:true}).click();

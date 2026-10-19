@@ -61,7 +61,7 @@ Confira o [roteiro de voluntários da etapa 2](docs/etapa-2-experiencia.md). Par
 
 ## Exportação, backup e restauração — 0.8.0
 
-Aguarde a gravação automática ou use Salvar, abra Configurações e use Exportar biblioteca completa ou Criar backup para escolher um arquivo `.zamar-backup`. Para recuperar, use Restaurar backup e confirme a substituição. A aplicação cria uma cópia dos dados atuais antes da restauração e informa onde ela foi salva. A apresentação é encerrada e o conteúdo não volta automaticamente ao datashow.
+Aguarde a gravação automática ou use Salvar, abra Configurações e use Exportar letras de músicas ou Exportar cifras de músicas para escolher um catálogo `.json`. Para recuperar, use Restaurar backup e confirme a substituição. A aplicação cria uma cópia dos dados atuais antes da restauração e informa onde ela foi salva. A apresentação é encerrada e o conteúdo não volta automaticamente ao datashow.
 
 A atualização reconhece o rascunho das versões anteriores e migra o banco com cópia prévia. Feche a versão antiga antes de abrir a nova e preserve sua pasta `data`. A limpeza de releases remove somente artefatos antigos; `release/data` é preservada. Músicas, textos, temas, imagens, programações e Bíblias importadas entram no backup; registros antigos de formato desconhecido são preservados e sinalizados, sem conversão destrutiva.
 
@@ -106,3 +106,16 @@ Para gerar e verificar uma entrega: `npm run check`, `npm test`, gerar os pacote
 O catálogo [library/encontro/songs.json](library/encontro/songs.json) contém 232 registros extraídos do PowerPoint fornecido, com seções por slide, origem e revisão pendente. Há 36 registros com alertas específicos e versões repetidas preservadas. Consulte [instruções e revisão](library/encontro/README.md).
 
 Na versão atual do código, abra **Importar texto ou cifra → Selecionar biblioteca JSON**, escolha o catálogo, confira/selecione as músicas e confirme o lote. Um backup é criado antes da gravação transacional; músicas com IDs já existentes são preservadas. O catálogo fica versionado no repositório, separado dos dados locais, e pode ser importado posteriormente em produção. Regere os pacotes de release para usar esse recurso pelos executáveis.
+
+
+## Exportação JSON de letras e cifras
+
+Em **Configurações**, use **Exportar letras de músicas** (todas as músicas, sem acordes) ou **Exportar cifras de músicas** (somente músicas com acordes, preservando letra/cifras e tons). São catálogos `zamar-song-library` importáveis por **Importar texto ou cifra → Selecionar biblioteca JSON**. Nenhuma Bíblia, imagem, tema ou programação é incluída. Os cadastros e dados locais permanecem em `data`, sem modificação pela exportação.
+
+As exportações preservam IDs e seções; uma música com cifras também aparece na exportação de letras, com os acordes removidos somente no arquivo. A exportação de cifras considera a presença de acordes, inclusive quando o modo de apresentação está definido como letra. Músicas arquivadas também são preservadas. Sem cifras cadastradas, o app informa isso e não gera um arquivo vazio.
+
+O importador mantém sua regra de preservar IDs já cadastrados: importar letras e depois cifras do mesmo ID não sobrescreve automaticamente a versão existente. Para acrescentar cifras a uma música já cadastrada, edite a música no app. Títulos iguais com IDs distintos continuam sujeitos à revisão do usuário. Limites do catálogo: 2 mil músicas e 10 MiB por arquivo.
+
+Bíblias são gerenciadas na aba Bíblia: importar SQL/SQLite, consultar, substituir pelo cadastro de importação, definir versão padrão e remover. Não há exportação de Bíblia na interface. Backups internos de proteção continuam completos para permitir recuperação de operações; **Restaurar backup** permanece disponível para arquivos completos anteriores. Os dois botões de exportação completa foram substituídos pelos de letras e cifras.
+
+O JSON exportado não atualiza automaticamente `library/encontro/songs.json` ou o GitHub. Para preservar todo o estado ao mover/atualizar, feche o app e copie a pasta `data` completa junto com ele.

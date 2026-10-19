@@ -2,6 +2,7 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { Bridge, Snapshot } from '../shared/contracts';
 const invoke = (channel: string, payload: unknown = null) => ipcRenderer.invoke(channel, { version: 1, payload });
 const bridge: Bridge = {
+  exportSongs:kind=>invoke('export-songs',kind),
   selectSongLibrary:()=>invoke('song-library-select'),
   importSongLibrary:(token,ids,ack)=>invoke('song-library-confirm',{token,ids,ack}),
   selectImport:()=>invoke('import-select'),

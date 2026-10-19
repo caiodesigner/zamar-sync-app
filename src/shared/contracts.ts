@@ -10,6 +10,7 @@ export type Snapshot = { revision: number; text: string; chords?:ChordPage; them
 export type InterfaceTheme = 'dark' | 'light';
 export type Initial = { interfaceTheme: InterfaceTheme; draft: string; dataPath: string; monitors: Monitor[]; snapshot: Snapshot };
 export interface Bridge {
+  exportSongs(kind:'lyrics'|'chords'):Promise<{path:string;count:number}|null>;
   selectSongLibrary():Promise<import('./song-library').LibrarySelection|null>;
   importSongLibrary(token:string,ids:string[],ack:boolean):Promise<{count:number;skipped:number;first:Song;backup:string}>;
   selectImport():Promise<ImportDraft|null>;

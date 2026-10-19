@@ -25,7 +25,7 @@ export class LibraryTransfer {
   if(choice==='ignore')return null;if(choice==='new'&&duplicates.length)throw new Error('Há duplicatas. Escolha ignorar, criar cópia ou atualizar.');
   let existing;if(choice==='update'){
    const candidate=duplicates.find(c=>c.id===target?.id);if(!candidate||candidate.updatedAt!==target?.updatedAt||candidate.revision!==target?.revision)throw new Error('O conteúdo mudou desde a prévia. Confira as duplicatas novamente.');existing=this.store.list(d.kind).find(r=>r.id===candidate.id)!;
-   mkdirSync(join(this.store.directory,'backups'),{recursive:true});this.store.createBackup(join(this.store.directory,'backups',`import-${Date.now()}-${randomUUID()}.zamar-backup`));
+   mkdirSync(join(this.store.directory,'backups'),{recursive:true});this.store.createBackup(join(this.store.directory,'backups',`import-${Date.now()}-${randomUUID()}.json`));
   }
   const draft=choice==='copy'?{...d,title:d.title.slice(0,190)+' (cópia)'}:d;
   const content=importedContent(draft,existing?.id??randomUUID());if(existing&&d.kind==='song'&&'archived' in content)content.archived=readSong(existing).archived;const record=d.kind==='song'?songRecord(content,existing):contentRecord('text',content,existing);

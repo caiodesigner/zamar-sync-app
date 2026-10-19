@@ -5,7 +5,7 @@ const { join, resolve } = require('node:path');
 const { tmpdir } = require('node:os');
 const { DatabaseSync } = require('node:sqlite');
 const { spawnSync } = require('node:child_process');
-const { gzipSync, gunzipSync } = require('node:zlib');
+const { gzipSync } = require('node:zlib');
 const { Store } = require('../dist/main/storage.js');
 const { requestPayload, initialPresentation } = require('../dist/main/protocol.js');
 function fixture(action) { const root=mkdtempSync(join(tmpdir(),'zamar-dados-ação-')); try { return action(root); } finally { rmSync(root,{recursive:true,force:true}); } }
@@ -34,7 +34,7 @@ test('backup restores database and attachments into empty directory and protects
  try {
   a.save('Letra e cifra [G/B]'); for(const kind of ['song','theme','program','bible-version']) a.put(record(kind,'music'));
   const asset=a.addAsset('fundo.txt','text/plain',Buffer.from('Anexo com acentuação'));
-  const file=join(root,'library.zamar-backup');a.createBackup(file);
+  const file=join(root,'library.json');a.createBackup(file);
   empty.restoreBackup(file); assert.equal(empty.read(),'Letra e cifra [G/B]');
   for(const kind of ['song','theme','program','bible-version']) assert.deepEqual(empty.list(kind),[record(kind,'music')]);
   assert.equal(readFileSync(join(root,'vazio','assets',asset.sha256),'utf8'),'Anexo com acentuação');
@@ -48,12 +48,12 @@ test('backup restores database and attachments into empty directory and protects
 test('tampered backup, manifest traversal, and invalid source leave current data untouched',()=>fixture(root=>{
  const store=new Store(root);
  try {
-  store.save('Preservar');const file=join(root,'valid.zamar-backup');store.createBackup(file);
-  const envelope=JSON.parse(gunzipSync(readFileSync(file)));
-  envelope.database.sha256='0'.repeat(64);writeFileSync(join(root,'invalid.zamar-backup'),gzipSync(JSON.stringify(envelope)));
-  assert.throws(()=>store.restoreBackup(join(root,'invalid.zamar-backup')),/Integridade/);
-  const unsafe=JSON.parse(gunzipSync(readFileSync(file)));unsafe.files=[{sha256:'../../escape',data:'eA=='}];writeFileSync(join(root,'unsafe.zamar-backup'),gzipSync(JSON.stringify(unsafe)));
-  assert.throws(()=>store.restoreBackup(join(root,'unsafe.zamar-backup')));
+  store.save('Preservar');const file=join(root,'valid.json');store.createBackup(file);
+  const envelope=JSON.parse(readFileSync(file,'utf8'));
+  envelope.sha256='0'.repeat(64);writeFileSync(join(root,'invalid.json'),gzipSync(JSON.stringify(envelope)));
+  assert.throws(()=>store.restoreBackup(join(root,'invalid.json')),/Integridade/);
+  const unsafe=JSON.parse(readFileSync(file,'utf8'));unsafe.files=[{sha256:'../../escape',data:'eA=='}];writeFileSync(join(root,'unsafe.json'),gzipSync(JSON.stringify(unsafe)));
+  assert.throws(()=>store.restoreBackup(join(root,'unsafe.json')));
   assert.equal(store.read(),'Preservar');
  } finally {store.close();}
 }));
@@ -76,7 +76,7 @@ test('restore rolls back all database changes if insertion fails mid-transaction
  const store=new Store(root);
  try {
   store.save('Antes');store.put(record('song','backup-song'));
-  const file=join(root,'rollback.zamar-backup');store.createBackup(file);
+  const file=join(root,'rollback.json');store.createBackup(file);
   store.save('Estado atual');store.put(record('song','current-song'));
   const original=store.put; store.put=()=>{throw new Error('Falha simulada de gravação');};
   assert.throws(()=>store.restoreBackup(file),/simulada/);store.put=original;

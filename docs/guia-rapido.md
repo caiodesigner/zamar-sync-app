@@ -32,7 +32,7 @@ Edições válidas são salvas automaticamente após pausa de 1,2 segundo. Confi
 
 Após uma falha, use **Recuperar última edição** para preparar a última gravação automática confirmada. Conteúdos anteriores continuam na biblioteca. A saída reabre fechada/preta.
 
-Em **Configurações → Exportar biblioteca completa** ou **Criar backup**, guarde um `.zamar-backup` fora da pasta do app. Inclui músicas, cifras, Bíblias, temas, imagens e programações confirmados. **Restaurar backup** substitui os dados após confirmação e cria cópia anterior. Para atualizar o aplicativo, siga `ATUALIZACAO.md`.
+Em **Configurações**, exporte **letras de músicas** ou **cifras de músicas** em JSON. As exportações são catálogos de músicas e não incluem Bíblia, imagens, temas ou programações. Para guardar todo o estado, feche o app e copie a pasta `data` completa. **Restaurar backup** substitui os dados após confirmação e cria cópia anterior. Para atualizar o aplicativo, siga `ATUALIZACAO.md`.
 
 ## Teclado
 
@@ -68,3 +68,11 @@ A versão é x64 para Windows 11 e Linux desktop Ubuntu 24.04/Mint 22. Em Waylan
 ## Biblioteca de músicas em JSON
 
 Em **Importar texto ou cifra → Selecionar biblioteca JSON**, selecione um catálogo no formato Zamar, expanda as letras para revisão e escolha as músicas do lote. Use a confirmação explícita para habilitar **Importar N músicas selecionadas**. Títulos repetidos podem indicar versões distintas; IDs já cadastrados são preservados. O app cria um backup anterior e salva o lote em uma transação. O catálogo Encontro e seus alertas estão em `library/encontro` no repositório; copie `songs.json` para o computador de produção quando quiser importar.
+
+
+
+### Exportações separadas
+
+**Exportar letras de músicas** inclui todas as músicas sem acordes. **Exportar cifras de músicas** inclui apenas músicas que têm acordes, com letra, cifras e tons preservados. Para recuperar esses catálogos, use **Importar texto ou cifra → Selecionar biblioteca JSON**. IDs existentes não são sobrescritos automaticamente. A exportação não altera músicas locais nem atualiza o JSON do repositório.
+
+Na aba **Bíblia**, importe SQL/SQLite, selecione a versão padrão ou remova uma tradução. Para substituir, cadastre o novo arquivo e escolha substituir a versão desejada. Não há exportação de Bíblia na interface. A opção **Restaurar backup** serve para backups completos anteriores; as cópias internas de proteção continuam automáticas.

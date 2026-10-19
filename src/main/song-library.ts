@@ -1,4 +1,5 @@
-import { readFileSync,statSync,mkdirSync } from 'node:fs';
+import { parseChords, DEFAULT_MUSIC } from '../shared/chords';
+import { readFileSync,statSync,mkdirSync,writeFileSync,renameSync,rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID } from 'node:crypto';
 import { Store } from './storage';
@@ -24,8 +25,24 @@ export class SongLibraryImport {
   const chosen=this.stage.library.songs.filter(s=>ids.includes(s.id));if(chosen.length!==ids.length)throw new Error('Seleção inválida.');
   const existing=new Set(this.store.list('song').map(s=>s.id));const pending=chosen.filter(s=>!existing.has(s.id));
   if(!pending.length)throw new Error('As músicas selecionadas já estão cadastradas.');
-  const folder=join(this.store.directory,'backups');mkdirSync(folder,{recursive:true});const backup=join(folder,`before-song-library-${Date.now()}-${randomUUID()}.zamar-backup`);this.store.createBackup(backup);
+  const folder=join(this.store.directory,'backups');mkdirSync(folder,{recursive:true});const backup=join(folder,`before-song-library-${Date.now()}-${randomUUID()}.json`);this.store.createBackup(backup);
   this.store.atomic(()=>{for(const song of pending)this.store.put(songRecord(song));});
   this.reset();return {count:pending.length,skipped:chosen.length-pending.length,first:readSong(this.store.list('song').find(s=>s.id===pending[0].id)!),backup};
  }
+}
+
+export function songExportCatalog(store:Store,kind:unknown){
+ if(kind!=='lyrics'&&kind!=='chords')throw new Error('Tipo de exportação inválido.');
+ const songs=store.list('song').map(readSong).filter(song=>kind==='lyrics'||song.sections.some(s=>parseChords(s.text).lines.some(line=>line.anchors.length)));
+ if(!songs.length)throw new Error(kind==='lyrics'?'Nenhuma música cadastrada para exportar.':'Nenhuma música com cifras cadastrada para exportar.');
+ const catalog=validateSongLibrary({format:'zamar-song-library',schemaVersion:1,name:kind==='lyrics'?'Letras de músicas':'Cifras de músicas',songs:songs.map(song=>({...song,sections:song.sections.map(section=>({...section,text:kind==='lyrics'?parseChords(section.text).lines.map(line=>line.lyric).join('\n'):section.text})),music:{...(song.music??DEFAULT_MUSIC),mode:kind==='lyrics'?'lyrics':'chords'}}))});
+ return {...catalog,exportKind:kind,createdAt:new Date().toISOString()};
+}
+export function writeSongExport(store:Store,kind:unknown,destination:string){
+ if(!destination.toLowerCase().endsWith('.json'))throw new Error('Escolha um arquivo .json.');
+ const catalog=songExportCatalog(store,kind);const bytes=Buffer.from(JSON.stringify(catalog,null,2)+'\n');
+ if(bytes.length>10*1024*1024)throw new Error('Catálogo acima de 10 MiB.');
+ const temporary=destination+'.'+randomUUID()+'.tmp';
+ try{writeFileSync(temporary,bytes,{flag:'wx',mode:0o600});renameSync(temporary,destination);}finally{rmSync(temporary,{force:true});}
+ return {path:destination,count:catalog.songs.length};
 }

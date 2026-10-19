@@ -13,7 +13,7 @@ test('program snapshots and text/theme persist independently and restore with im
  const program={id:'culto',title:'Domingo',items:[{...item(),theme},{...item(),id:'second',source:{kind:'text',id:'t'}}]};
  store.put(contentRecord('text',{id:'t',title:'Aviso',text:'Original'}));store.put(contentRecord('theme',theme));store.put(contentRecord('program',program));store.setSetting('last-program','culto');store.close();store=new Store(root);
  try{assert.deepEqual(readContent('program',store.list('program')[0]),program);store.put(contentRecord('text',{id:'t',title:'Aviso',text:'Editado'}));store.put(contentRecord('theme',{...theme,background:'#ffffff'}));assert.deepEqual(readContent('program',store.list('program')[0]),program);
- const backup=join(root,'culto.zamar-backup');store.createBackup(backup);store.put(contentRecord('program',{...program,items:[...program.items].reverse()}));store.restoreBackup(backup);assert.deepEqual(readContent('program',store.list('program')[0]),program);assert.equal(store.imageBytes(asset.sha256).toString(),'fixture de integridade');assert.equal(store.getSetting('last-program'),'culto');
+ const backup=join(root,'culto.json');store.createBackup(backup);store.put(contentRecord('program',{...program,items:[...program.items].reverse()}));store.restoreBackup(backup);assert.deepEqual(readContent('program',store.list('program')[0]),program);assert.equal(store.imageBytes(asset.sha256).toString(),'fixture de integridade');assert.equal(store.getSetting('last-program'),'culto');
  }finally{store.close();}
 }));
 test('invalid program/theme and unsafe file references are rejected',()=>{

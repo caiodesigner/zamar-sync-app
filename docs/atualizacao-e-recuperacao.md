@@ -2,7 +2,7 @@
 
 ## Atualização portátil segura
 
-1. Na versão atual, aguarde a gravação e exporte um `.zamar-backup`. Guarde o arquivo fora da pasta do app.
+1. Na versão atual, aguarde a gravação, feche o app e copie a pasta `data` completa para um local seguro fora da pasta do app. Exporte letras e cifras em JSON se desejar cópias separadas do repertório.
 2. Feche completamente o aplicativo. Copie a pasta inteira da versão anterior, incluindo `data`, para um local separado. Essa cópia fechada é o ponto de retorno; não a abra com a versão nova.
 3. Extraia o pacote novo em outra pasta vazia e gravável. Não sobreponha arquivos de versões diferentes nem execute dentro do ZIP/tar.gz.
 4. Com os aplicativos fechados, copie `data` da pasta atual para a pasta nova. No AppImage, `data` fica ao lado do arquivo AppImage original, fora da montagem/extração temporária.
@@ -31,3 +31,13 @@ Decisão desta entrega: ZIP portátil sem assinatura Authenticode; não foram fo
 Arquivos novos ou sem reputação podem gerar avisos do SmartScreen. Assinar identifica o editor, mas não garante ausência imediata de avisos; políticas como Smart App Control podem bloquear arquivos sem assinatura. Confira a origem e a política do computador, sem desabilitar proteções como procedimento padrão. Fontes: [Microsoft — reputação de aplicativos](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/smartscreen-reputation), [electron-builder v26 — Windows](https://www.electron.build/v26/docs/win/).
 
 Assinatura futura exige uma decisão de distribuição e credenciais próprias; não é necessária para usar os fluxos offline onde a política do sistema permitir o executável. Esta avaliação encerra 10.5 sem prometer aprovação de todas as políticas de Windows. Não houve nova execução Windows pelo agente nesta entrega; as validações físicas foram encerradas conforme confirmação do usuário.
+
+
+## Backup JSON — revisão após a entrega 1.0.0
+
+Novas exportações e cópias automáticas de proteção usam `.json`, envelope 3, com registros/configurações em texto estruturado e anexos base64. Os envelopes antigos 1/2 continuam sendo aceitos na restauração, mas aplicativos anteriores não restauram o envelope 3. Para retornar a uma versão anterior, preserve a pasta fechada e os backups originais daquela versão. O esquema SQLite local permanece 2. Backups JSON não são catálogos de músicas; recupere-os por **Configurações → Restaurar backup**.
+
+
+## Revisão atual — exportações por tipo
+
+A interface agora oferece apenas exportações JSON de letras e cifras, em formato de catálogo de músicas; Bíblia não é exportada por esses fluxos. Backups completos do envelope 3 descritos acima continuam como mecanismo interno de proteção e podem ser restaurados quando disponíveis. Para atualização e retorno com todo o estado (inclusive Bíblia/programações/anexos), preserve a pasta `data` fechada. Catálogos de letras/cifras são importados pela biblioteca; não use Restaurar backup para esses arquivos.

@@ -1,4 +1,4 @@
-import { SongLibraryImport } from './song-library';
+import { SongLibraryImport, writeSongExport, songExportCatalog } from './song-library';
 import { LibraryTransfer } from './library-transfer';
 import { validateChordPage } from '../shared/chords';
 import { Bibles } from './bibles';
@@ -158,14 +158,15 @@ app.whenReady().then(async () => {
       maintenance = true;
       try { return await action(); } finally { maintenance = false; }
     };
+    handle('export-songs', kind => maintain(async()=>{songExportCatalog(store,kind);const destination=await dialog.showSaveDialog(operator!,{title:kind==='lyrics'?'Exportar letras de músicas':'Exportar cifras de músicas',defaultPath:`zamar-${kind==='lyrics'?'letras':'cifras'}.json`,filters:[{name:'Catálogo de músicas JSON',extensions:['json']}]});return destination.canceled||!destination.filePath?null:writeSongExport(store,kind,destination.filePath);}));
     handle('create-backup', () => maintain(async () => {
-      const destination = await dialog.showSaveDialog(operator!, { title: 'Criar backup', defaultPath: `zamar-${new Date().toISOString().slice(0,10)}.zamar-backup`, filters: [{ name: 'Backup Zamar', extensions: ['zamar-backup'] }] });
+      const destination = await dialog.showSaveDialog(operator!, { title: 'Exportar backup JSON', defaultPath: `zamar-${new Date().toISOString().slice(0,10)}.json`, filters: [{ name: 'Backup JSON Zamar', extensions: ['json'] }] });
       if (destination.canceled || !destination.filePath) return null;
       store.createBackup(destination.filePath);
       return destination.filePath;
     }));
     handle('restore-backup', () => maintain(async () => {
-      const source = await dialog.showOpenDialog(operator!, { title: 'Restaurar backup', properties: ['openFile'], filters: [{ name: 'Backup Zamar', extensions: ['zamar-backup'] }] });
+      const source = await dialog.showOpenDialog(operator!, { title: 'Restaurar backup', properties: ['openFile'], filters: [{ name: 'Backup Zamar (JSON ou formato antigo)', extensions: ['json','zamar-backup'] }] });
       if (source.canceled || !source.filePaths[0]) return null;
       const answer = await dialog.showMessageBox(operator!, { type: 'warning', message: 'Restaurar os dados deste backup?', detail: 'Isso substitui os dados salvos e descarta o alterações não salvas no conteúdo e na programação. Uma cópia dos dados atuais será criada antes da restauração. A saída será encerrada.', buttons: ['Cancelar', 'Restaurar'], defaultId: 0, cancelId: 0 });
       if (answer.response !== 1) return null;

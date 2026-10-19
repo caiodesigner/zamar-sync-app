@@ -273,3 +273,27 @@
 **Verificação:** tipos/build e suíte de domínio aprovados, incluindo cobertura/conservação dos slides, seleção parcial, importação dos 232 registros, reimportação sem sobrescrever edições e rollback injetado. Teste gráfico Linux com sandbox importou o lote, verificou persistência após recarga, estado público inalterado e bloqueio de reimportação. Pacotes release ainda precisam ser regenerados.
 
 **Regressão final:** suíte gráfica completa Linux em modo de desenvolvimento aprovada com sandbox, incluindo letras, textos, temas, Bíblia, cifras, importação/recuperação, teclado e zoom. Extração repetida produziu os mesmos hashes dos três artefatos gerados.
+
+
+## 19/10/2026 — Backup completo em JSON
+
+**Solicitação:** substituir a exportação `.zamar-backup` por JSON, mantendo a persistência local em banco e anexos.
+
+**Implementação:** envelope 3 em JSON UTF-8 legível, com registros/configurações/metadados estruturados e anexos base64 com hashes. Nenhum banco SQLite binário é embutido no formato novo. Exportação parte de snapshot consistente, valida limites e grava atomicamente. Restauração reconstrói banco temporário com esquema próprio, verifica conteúdo/anexos, cria cópia anterior JSON e substitui dados em transação. Leitura de envelopes antigos gzip 1/2 mantida. Backups de proteção antes de importações e alterações de Bíblia também passam a `.json`; snapshots internos de migração continuam sendo cópias SQLite locais.
+
+**Uso:** Configurações → Exportar biblioteca completa / Criar backup e Restaurar backup. JSON de backup completo (`zamar-backup`) é distinto do catálogo de músicas (`zamar-song-library`). Exportar não atualiza automaticamente o catálogo do repositório. Manifesto de build atualizado para envelope 3; guias e interface revisados.
+
+**Verificação:** tipos/build e suíte de domínio aprovados. Novos testes conferem texto estruturado legível, transferência entre pastas com anexos, cópia anterior JSON, rejeição de JSON inválido/conteúdo adulterado/configurações duplicadas/catálogo incorreto e restauração legada. Regressão gráfica completa Linux aprovada com exportação/restauração JSON, imagens e Bíblia em dados temporários, sandbox habilitado. Os pacotes em release precisam ser regenerados para distribuir a alteração.
+
+
+## 19/10/2026 — Separar exportações de letras e cifras
+
+**Solicitação:** oferecer exportações separadas de letras/cifras em JSON, sem exportação de Bíblia; preservar banco local e gerenciamento de versões bíblicas.
+
+**Implementação:** Configurações oferece Exportar letras de músicas e Exportar cifras de músicas, com catálogos `zamar-song-library` reimportáveis. Letras inclui todas as músicas sem marcações de acordes; cifras seleciona músicas com acordes, independentemente do modo atual de exibição, preservando texto, posições e tons. IDs/seções e músicas arquivadas são preservados. Exportação atômica, limites iguais ao importador, aviso quando não há músicas/cifras. Nenhuma Bíblia, imagem, programação ou tema entra nos catálogos. As músicas locais não são alteradas.
+
+**Bíblia:** importação SQL/SQLite, consulta, substituição por nova importação, padrão e remoção mantidos. Não há botão de exportação bíblica. Exportação completa removida da interface; backups completos internos de proteção e recuperação de arquivos anteriores permanecem disponíveis para não perder capacidade de recuperação. Testes de recuperação preparam essas cópias pela API de compatibilidade; a interface de exportação tem apenas as duas opções solicitadas.
+
+**Validação:** tipos/build e testes de domínio aprovados, incluindo exclusão de Bíblias/anexos, remoção de acordes somente no arquivo de letras, seleção por presença de cifras, preservação dos tons e dados locais, compatibilidade do catálogo e coleção de cifras vazia. Teste gráfico específico aprovou os dois botões, os JSONs gerados e dados locais intactos. Guias atualizados; release precisa ser regenerado.
+
+**Regressão final desta revisão:** suíte gráfica completa Linux em modo de desenvolvimento aprovada, incluindo CRUD/consulta de Bíblia, letras, cifras, temas, recuperação, teclado e zoom, com sandbox habilitado e dados temporários.
