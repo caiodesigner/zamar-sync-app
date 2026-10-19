@@ -63,3 +63,8 @@ Em **Configurações → Exportar biblioteca completa** ou **Criar backup**, gua
 | Outra instância usa os dados | Feche a outra instância antes de abrir a mesma pasta |
 
 A versão é x64 para Windows 11 e Linux desktop Ubuntu 24.04/Mint 22. Em Wayland, a projeção depende de XWayland. Use as bibliotecas normais do sistema; não desabilite sandbox para contornar incompatibilidades.
+
+
+## Biblioteca de músicas em JSON
+
+Em **Importar texto ou cifra → Selecionar biblioteca JSON**, selecione um catálogo no formato Zamar, expanda as letras para revisão e escolha as músicas do lote. Use a confirmação explícita para habilitar **Importar N músicas selecionadas**. Títulos repetidos podem indicar versões distintas; IDs já cadastrados são preservados. O app cria um backup anterior e salva o lote em uma transação. O catálogo Encontro e seus alertas estão em `library/encontro` no repositório; copie `songs.json` para o computador de produção quando quiser importar.

@@ -99,3 +99,10 @@ A versão 1.0.0 melhora a busca em bibliotecas grandes e o apresentador em zoom 
 [Guia rápido](docs/guia-rapido.md) e [atualização/retorno](docs/atualizacao-e-recuperacao.md) acompanham os pacotes como GUIA-RAPIDO.md e ATUALIZACAO.md. COMPONENTS.json e BUILD-MANIFEST.json identificam dependências e hashes da compilação. Windows permanece sem assinatura digital; a avaliação e os alertas possíveis estão no guia de atualização.
 
 Para gerar e verificar uma entrega: `npm run check`, `npm test`, gerar os pacotes e `npm run verify:release`. Os arquivos SHA-256 identificam os três pacotes. O teste `npm run test:upgrade` usa uma cópia anterior sem dados reais indicada por ZAMAR_PREVIOUS_APP. O plano registra 44/44 tarefas encerradas, distinguindo evidência automatizada e aceite externo.
+
+
+## Biblioteca Encontro — importação em lote
+
+O catálogo [library/encontro/songs.json](library/encontro/songs.json) contém 232 registros extraídos do PowerPoint fornecido, com seções por slide, origem e revisão pendente. Há 36 registros com alertas específicos e versões repetidas preservadas. Consulte [instruções e revisão](library/encontro/README.md).
+
+Na versão atual do código, abra **Importar texto ou cifra → Selecionar biblioteca JSON**, escolha o catálogo, confira/selecione as músicas e confirme o lote. Um backup é criado antes da gravação transacional; músicas com IDs já existentes são preservadas. O catálogo fica versionado no repositório, separado dos dados locais, e pode ser importado posteriormente em produção. Regere os pacotes de release para usar esse recurso pelos executáveis.

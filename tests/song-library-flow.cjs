@@ -1,0 +1,24 @@
+const assert=require('node:assert/strict');const {resolve}=require('node:path');
+module.exports=async({app,page})=>{
+ await app.evaluate(({dialog},path)=>{dialog.showOpenDialog=async()=>({canceled:false,filePaths:[path]});},resolve('library/encontro/songs.json'));
+ const before=(await page.evaluate(()=>window.zamar.initial())).snapshot;
+ await page.getByRole('button',{name:'Importar texto ou cifra',exact:true}).click();
+ await page.getByRole('button',{name:'Selecionar biblioteca JSON',exact:true}).click();
+ await page.getByRole('heading',{name:'Letras Encontro · 232 músicas',exact:true}).waitFor();
+ assert.equal(await page.getByRole('button',{name:'Importar 0 músicas selecionadas',exact:true}).isEnabled(),false);
+ await page.getByRole('button',{name:'Selecionar todas disponíveis',exact:true}).click();
+ assert.equal(await page.getByRole('button',{name:'Importar 232 músicas selecionadas',exact:true}).isEnabled(),false);
+ await page.getByRole('checkbox',{name:/Conferi as músicas selecionadas/}).check();
+ await page.getByRole('button',{name:'Importar 232 músicas selecionadas',exact:true}).click();
+ await page.getByRole('dialog').waitFor({state:'hidden'});
+ assert.equal((await page.evaluate(()=>window.zamar.listSongs())).songs.length,232);
+ assert.deepEqual((await page.evaluate(()=>window.zamar.initial())).snapshot,before);
+ await page.reload();await page.getByRole('heading',{name:'Sua mensagem em destaque.',exact:true}).waitFor();
+ assert.equal((await page.evaluate(()=>window.zamar.listSongs())).songs.length,232);
+ await page.getByRole('button',{name:'Importar texto ou cifra',exact:true}).click();await page.getByRole('button',{name:'Selecionar biblioteca JSON',exact:true}).click();
+ await page.getByRole('heading',{name:'Letras Encontro · 232 músicas',exact:true}).waitFor();
+ await page.getByRole('button',{name:'Selecionar todas disponíveis',exact:true}).click();
+ assert.equal(await page.getByRole('button',{name:'Importar 0 músicas selecionadas',exact:true}).isEnabled(),false);
+ console.log('PASS: JSON catalog preview, explicit acknowledgment, 232-song batch, unchanged presentation, persisted songs, and duplicate reimport protection.');
+ return {app,page};
+};

@@ -1,3 +1,4 @@
+import { SongLibraryImport } from './song-library';
 import { LibraryTransfer } from './library-transfer';
 import { validateChordPage } from '../shared/chords';
 import { Bibles } from './bibles';
@@ -90,6 +91,9 @@ app.whenReady().then(async () => {
       if (value !== 'dark' && value !== 'light') throw new Error('Tema da interface inválido.');
       store.setSetting('interface-theme', value);
     });
+    const songLibrary=new SongLibraryImport(store);
+    handle('song-library-select',async()=>{const selected=await dialog.showOpenDialog(operator!,{title:'Importar biblioteca de músicas',properties:['openFile'],filters:[{name:'Catálogo JSON Zamar',extensions:['json']}]});return selected.canceled||!selected.filePaths[0]?null:songLibrary.select(selected.filePaths[0]);});
+    handle('song-library-confirm',value=>{const p=value as {token:unknown;ids:unknown;ack:unknown};if(!p)throw new Error('Lote inválido.');return songLibrary.confirm(p.token,p.ids,p.ack);});
     const transfer=new LibraryTransfer(store);
     handle('import-select',async()=>{const selected=await dialog.showOpenDialog(operator!,{title:'Importar texto ou cifra',properties:['openFile'],filters:[{name:'Texto e cifras UTF-8',extensions:['txt','pro','chordpro']}]});return selected.canceled||!selected.filePaths[0]?null:transfer.select(selected.filePaths[0]);});
     handle('import-preview',value=>transfer.preview(value));
@@ -166,7 +170,7 @@ app.whenReady().then(async () => {
       const answer = await dialog.showMessageBox(operator!, { type: 'warning', message: 'Restaurar os dados deste backup?', detail: 'Isso substitui os dados salvos e descarta o alterações não salvas no conteúdo e na programação. Uma cópia dos dados atuais será criada antes da restauração. A saída será encerrada.', buttons: ['Cancelar', 'Restaurar'], defaultId: 0, cancelId: 0 });
       if (answer.response !== 1) return null;
       bibles.cancel();
-      const previousBackup = store.restoreBackup(source.filePaths[0]);transfer.reset();
+      const previousBackup = store.restoreBackup(source.filePaths[0]);transfer.reset();songLibrary.reset();
       const restored = initialPresentation(store.getSetting('presentation'));
       output?.close();
       state = { ...restored, revision: Math.max(restored.revision, state.revision + 1) };

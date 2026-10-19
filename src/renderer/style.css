@@ -60,3 +60,5 @@ fieldset{border:0;padding:0;margin:0;min-width:0}progress{max-width:100%;margin:
 
 :root[data-theme=light] button.primary,:root[data-theme=light] .section-tabs [aria-pressed=true]{color:#fff;background:var(--accent)}
 :root[data-theme=light] button.primary:hover:not(:disabled){background:#333}
+
+.batch-song-list{max-height:320px;overflow:auto;margin:16px 0;border:1px solid var(--border);border-radius:8px;padding:8px}.batch-song-list details{padding:8px;border-bottom:1px solid var(--border)}.batch-song-list summary{cursor:pointer;font-size:13px}.batch-song-list pre{white-space:pre-wrap;overflow-wrap:anywhere;font:13px/1.6 system-ui,sans-serif}

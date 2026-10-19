@@ -59,6 +59,7 @@ const { join, resolve } = require('node:path');
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');
   assert.equal((await page.evaluate(() => window.zamar.initial())).interfaceTheme, 'dark');
   if((process.env.ZAMAR_SMOKE_FLOW==='qualification'||process.argv.includes('--qualification'))){({app,page}=await require('./qualification-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
+  if(process.env.ZAMAR_SMOKE_FLOW==='library'){({app,page}=await require('./song-library-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
   if(process.env.ZAMAR_SMOKE_FLOW==='transfer'){({app,page}=await require('./transfer-flow.cjs')({app,page,launch,directory}));console.log(`Format: ${format}`);return;}
   const text = '[C]Canção de teste\n[G/B]Coração e fé 🎵';
   await page.locator('textarea').fill(text);

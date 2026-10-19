@@ -260,3 +260,16 @@
 **Implementação:** reconhecimento pelo cabeçalho, cópia temporária isolada com limpeza pelo controlador, leitura SQLite somente de tabelas comuns com limites e identificação segura de colunas. Sem execução de scripts de esquema, views, triggers ou extensões. O arquivo original permanece intacto. Mapeamento, duplicatas, confirmação, persistência do corpus e backup continuam compartilhados com a importação SQL.
 
 **Verificação:** tipos e build aprovados; suíte de domínio aprovada, incluindo novos cenários SQLite com tabela relacionada de livros, acentuação, consulta após remoção da origem, preservação byte a byte, rejeição de colunas geradas, BLOBs e banco corrompido sem cadastro parcial. Pacotes de distribuição precisam ser regenerados para incluir o recurso.
+
+
+## 19/10/2026 — Catálogo Encontro e importação JSON em lote
+
+**Solicitação:** gerar uma biblioteca versionada tomando o PPTX fornecido como fonte principal, preservando o conteúdo e permitindo cadastro posterior em produção.
+
+**Extração:** script Python padrão lê a ordem real da apresentação e as quebras DrawingML; 981 slides, quatro vazios, 232 registros, 36 alertas específicos. Texto fonte normalizado separado para auditoria, hash do original, IDs determinísticos e seções por slide. Duplicatas não foram fundidas. Todos os registros aguardam revisão humana; consultas pontuais de identificação estão em library/encontro/REFERENCIAS.md, sem substituir letras ou presumir autores. O PPTX não é necessário no repositório.
+
+**Aplicativo:** seletor de catálogo JSON, validação do formato e limites, prévia expansível, seleção individual/todas, alertas e confirmação explícita. IDs existentes são preservados; títulos repetidos são sinalizados. Backup anterior e transação atômica, sem alterar projeção/programações. Não foi modificado nenhum banco real do usuário.
+
+**Verificação:** tipos/build e suíte de domínio aprovados, incluindo cobertura/conservação dos slides, seleção parcial, importação dos 232 registros, reimportação sem sobrescrever edições e rollback injetado. Teste gráfico Linux com sandbox importou o lote, verificou persistência após recarga, estado público inalterado e bloqueio de reimportação. Pacotes release ainda precisam ser regenerados.
+
+**Regressão final:** suíte gráfica completa Linux em modo de desenvolvimento aprovada com sandbox, incluindo letras, textos, temas, Bíblia, cifras, importação/recuperação, teclado e zoom. Extração repetida produziu os mesmos hashes dos três artefatos gerados.
