@@ -1,3 +1,4 @@
+import { DEFAULT_MUSIC, KEYS, parseChords, type Music } from '../shared/chords';
 import React, { useState } from 'react';
 import type { Song } from '../shared/songs';
 export function newSong(): Song { const id = crypto.randomUUID(); return { id:crypto.randomUUID(),title:'',author:'',archived:false,sections:[{id,label:'Verso 1',text:''}],sequence:[id] }; }
@@ -5,11 +6,13 @@ export function SongEditor({song,change,save,dirty}: {song:Song; change:(song:So
   const [selected,setSelected] = useState('');
   const sectionId = song.sections.some(s => s.id === selected) ? selected : song.sections[0].id;
   const section = song.sections.find(s => s.id === sectionId)!;
+  const music=song.music??DEFAULT_MUSIC; const warnings=[...new Set(song.sections.flatMap(s=>parseChords(s.text).warnings))];
   const patch = (values:Partial<Song>) => change({...song,...values});
   const edit = (values:Partial<typeof section>) => patch({sections:song.sections.map(s => s.id === sectionId ? {...s,...values} : s)});
   return <><div className="section-heading"><h2>Editar música</h2><span className="save-state">{dirty ? '● Não salvo' : '✓ Música salva'}</span></div>
     <label className="field">Título<input aria-label="Título da música" maxLength={200} value={song.title} onChange={e=>patch({title:e.target.value})}/></label>
     <label className="field">Autor<input aria-label="Autor da música" maxLength={200} value={song.author} onChange={e=>patch({author:e.target.value})}/></label>
+    <MusicSettings music={music} change={music=>patch({music})}/><p className="hint">Digite [C]Minha [G/B]canção. O acorde fica ancorado na próxima letra. Os tons são centros tonais; o caráter menor é indicado nos acordes, como Am. Alterar o tom preserva a letra original.</p>{warnings.length>0 && <details className="chord-warnings"><summary>{warnings.length} aviso(s) de cifra</summary>{warnings.map(w=><p key={w}>{w}</p>)}</details>}
     <div className="section-heading"><h3>Seções</h3><button disabled={song.sections.length>=100} onClick={()=>{ const id=crypto.randomUUID(); patch({sections:[...song.sections,{id,label:`Seção ${song.sections.length+1}`,text:''}],sequence:[...song.sequence,id]}); setSelected(id); }}>Adicionar seção</button></div>
     <div className="section-tabs">{song.sections.map(s=><button key={s.id} aria-pressed={s.id===sectionId} onClick={()=>setSelected(s.id)}>{s.label}</button>)}</div>
     <label className="field">Nome da seção<input aria-label="Nome da seção" maxLength={100} value={section.label} onChange={e=>edit({label:e.target.value})}/></label>
@@ -22,3 +25,5 @@ export function SongEditor({song,change,save,dirty}: {song:Song; change:(song:So
     <div className="editor-actions"><button onClick={()=>patch({archived:!song.archived})}>{song.archived ? 'Desarquivar música' : 'Arquivar música'}</button><button className="primary" onClick={save}>Salvar música</button></div><p className="hint">Arquivamento e edição são confirmados em Salvar música.</p>
   </>;
 }
+
+export function MusicSettings({music,change}:{music:Music;change:(music:Music)=>void}){return <fieldset className="music-settings"><legend>Cifras e transposição</legend><label className="field">Tom original<select aria-label="Tom original" value={music.originalKey} onChange={e=>change({...music,originalKey:e.target.value})}>{KEYS.map(k=><option key={k}>{k}</option>)}</select></label><label className="field">Tom de apresentação<select aria-label="Tom de apresentação" value={music.targetKey} onChange={e=>change({...music,targetKey:e.target.value})}>{KEYS.map(k=><option key={k}>{k}</option>)}</select></label><label className="field">Acidentes<select aria-label="Acidentes" value={music.accidentals} onChange={e=>change({...music,accidentals:e.target.value as 'sharp'|'flat'})}><option value="sharp">Sustenidos</option><option value="flat">Bemóis</option></select></label><label className="field">Exibição da música<select aria-label="Exibição da música" value={music.mode} onChange={e=>change({...music,mode:e.target.value as 'lyrics'|'chords'})}><option value="lyrics">Somente letra</option><option value="chords">Letra e cifras</option></select></label></fieldset>;}

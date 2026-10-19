@@ -240,6 +240,8 @@ const { join, resolve } = require('node:path');
 
   console.log('PASS: song creation/edit/reopen, section references, accent-insensitive author/lyrics search, archive/unarchive, explicit navigation, hide text and library selection isolation.');
   ({app,page}=await require('./program-flow.cjs')({app,page,launch,directory}));
+  ({app,page}=await require('./bible-flow.cjs')({app,page,launch,directory}));
+  ({app,page}=await require('./chord-flow.cjs')({app,page,launch,directory}));
   console.log('PASS: library example, prepared blocks, session queue, help and Bible flow dialogs.');
   console.log(`Format: ${format}; platform: ${process.platform}`);
   console.log('PASS: Electron application, SQLite reopen, accented portable path, isolated renderer, separate output, explicit presentation, blackout, rejected output command, simulated external monitor removal.');

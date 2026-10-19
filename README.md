@@ -1,6 +1,6 @@
 # Zamar Sync
 
-Versão 0.5.0 de aplicativo desktop offline para projeção de letras, Bíblia e cifras. A etapa 5 adiciona programações persistentes com cópias independentes, textos livres e temas com imagem local, fonte, cores, alinhamento, margens e proporções 16:9/4:3. A biblioteca musical e os controles da etapa 4 continuam disponíveis. Bíblia SQL e transposição de cifras pertencem às próximas etapas.
+Versão 0.7.0 de aplicativo desktop offline para projeção de letras, Bíblia e cifras. A etapa 6 adiciona importação restrita de Bíblia SQL com prévia, consulta por referência, pesquisa, navegação e projeção de versículos com versão e atribuição. Músicas, textos, programações e temas continuam disponíveis. A etapa 7 acrescenta cifras estruturadas, transposição e apresentação alinhada, com cópias independentes na programação.
 
 ## Desenvolvimento
 
@@ -20,7 +20,7 @@ Extrair o ZIP de `release` por completo para uma pasta gravável e abrir `Zamar 
 
 Preparar um texto, escolher Ensaio neste monitor ou um datashow em modo estendido e clicar Iniciar apresentação. Usar Apresentar para enviar o bloco escolhido. “Salvar texto” confirma gravação local; fechar e reabrir recupera o texto salvo. O protótipo ainda não tem salvamento automático. Editar o rascunho não altera a projeção. Esc na projeção fecha a saída. Uma tela usa ensaio local, sem abrir saída em tela cheia sobre os controles.
 
-A importação de Bíblia em `.sql` está planejada para a etapa 6. O usuário poderá cadastrar traduções obtidas gratuitamente e usar o conteúdo offline após a importação. O protótipo atual ainda não implementa esse fluxo e não inclui Bíblia pré-carregada.
+Na aba Bíblia, use Cadastrar Bíblia para selecionar um `.sql` UTF-8 já baixado, informar metadados, conferir o mapeamento e aceitar a cobertura antes de confirmar. Os dois perfis suportados são tabela única e tabela de livros relacionada aos versículos. Dumps incompatíveis são recusados sem execução. Não há Bíblia pré-carregada; ARA pode ser cadastrada quando o arquivo for compatível, sem exigência de documento de licença no fluxo local.
 
 ## Estado e limites
 
@@ -42,7 +42,7 @@ Para testar os artefatos Linux: após `npm run pack:linux`, executar `ZAMAR_SMOK
 
 ## Testar a experiência atual
 
-Use os pacotes com versão 0.5.0 em `release` ou `npm start`. Não copie dados reais para o teste; use uma pasta nova ou um backup.
+Use os pacotes com versão 0.7.0 em `release` ou `npm start`. Não copie dados reais para o teste; use uma pasta nova ou um backup.
 
 Em Músicas, use Nova música, informe título e autor, edite a letra de cada seção e organize a ordem. Repetir seção selecionada reutiliza o mesmo refrão. Clique em Salvar música antes de trocar de conteúdo. A busca encontra título, autor e letra sem distinguir acentos. Arquivar música e Salvar música move o cadastro para Ver arquivadas; é possível desarquivar.
 
@@ -56,20 +56,22 @@ Cada item guarda uma cópia do conteúdo e do tema. Editar a biblioteca preserva
 
 Na prévia, use Novo tema ou Editar tema. Escolha proporção, cores, fonte, tamanho, alinhamento e margens. Imagens PNG/JPEG são copiadas para a pasta de dados e entram nos backups. Salvar um tema apenas modifica a preparação; não muda a saída ativa. Ocultar texto preserva o fundo do tema, enquanto Tela preta apaga toda a imagem.
 
-Confira o [roteiro de voluntários da etapa 2](docs/etapa-2-experiencia.md). A importação bíblica e a transposição de cifras ainda não estão disponíveis. O botão da Bíblia explica o fluxo planejado.
+Confira o [roteiro de voluntários da etapa 2](docs/etapa-2-experiencia.md). Para cifras, use `[C]Minha [G/B]canção`, selecione os tons e o modo de exibição e salve a música. Veja o [roteiro da etapa 7](docs/etapa-7-cifras.md). Para Bíblia, consulte [formatos e roteiro da etapa 6](docs/etapa-6-biblia-offline.md). Use referências como Jo 3:16 ou 1 Jo 2:1-3; pesquise ou navegue por livro/capítulo. Preparar passagem não altera a saída até Apresentar. O arquivo original pode ser removido após importar.
 
 
-## Backup e restauração — 0.5.0
+## Backup e restauração — 0.6.0
 
 Salve seus conteúdos, temas e programações, abra Configurações e use Criar backup para escolher um arquivo `.zamar-backup`. Para recuperar, use Restaurar backup e confirme a substituição. A aplicação cria uma cópia dos dados atuais antes da restauração e informa onde ela foi salva. A apresentação é encerrada e o conteúdo não volta automaticamente ao datashow.
 
-A atualização reconhece o rascunho das versões anteriores e migra o banco com cópia prévia. Feche a versão antiga antes de abrir a nova e preserve sua pasta `data`. A limpeza de releases remove somente artefatos antigos; `release/data` é preservada. Músicas, textos, temas, imagens e programações entram no backup; registros antigos de formato desconhecido são preservados e sinalizados, sem conversão destrutiva.
+A atualização reconhece o rascunho das versões anteriores e migra o banco com cópia prévia. Feche a versão antiga antes de abrir a nova e preserve sua pasta `data`. A limpeza de releases remove somente artefatos antigos; `release/data` é preservada. Músicas, textos, temas, imagens, programações e Bíblias importadas entram no backup; registros antigos de formato desconhecido são preservados e sinalizados, sem conversão destrutiva.
 
 O esquema 2 amplia o banco para textos livres, com cópia anterior e migração transacional. Backups do esquema 1 continuam restauráveis na versão atual. Versões antigas recusam o banco atualizado; preserve seu backup antes de atualizar.
 
+Backups 0.6.0 usam envelope 2, necessário para os corpus bíblicos. A versão atual também restaura envelopes antigos. O cache de consulta bíblica é reconstruído dos dados normalizados incluídos no backup; não requer o SQL original.
+
 Detalhes e limites em [dados e recuperação](docs/etapa-3-dados.md).
 
-A pasta release contém apenas os pacotes gerados 0.5.0 para distribuição e seus hashes, além das pastas de teste atuais e dos dados preservados. Para limpezas futuras após gerar e conferir os arquivos SHA-256, usar `node scripts/clean-release.cjs`.
+A pasta release contém apenas os pacotes gerados 0.7.0 para distribuição e seus hashes, além das pastas de teste atuais e dos dados preservados. Para limpezas futuras após gerar e conferir os arquivos SHA-256, usar `node scripts/clean-release.cjs`.
 
 
 ## Modo apresentador e datashow
@@ -78,4 +80,4 @@ Com uma tela, selecione Ensaio neste monitor e Iniciar apresentação. Apresenta
 
 Ver [correção do modo apresentador](docs/ajuste-modo-apresentador.md).
 
-Detalhes da entrega atual e roteiro de aceitação em [etapa 5 — programação e temas](docs/etapa-5-programacao-e-temas.md). Histórico de letras em [etapa 4](docs/etapa-4-letras.md).
+Detalhes da entrega atual e roteiro de aceitação em [etapa 6 — Bíblia offline](docs/etapa-6-biblia-offline.md). Histórico de programação e temas em [etapa 5](docs/etapa-5-programacao-e-temas.md). Histórico de letras em [etapa 4](docs/etapa-4-letras.md).

@@ -2,10 +2,10 @@ import { DEFAULT_THEME, slideGeometry, type Theme } from './content';
 // Conservative pagination shares canonical geometry, font and margins with the renderer.
 // Up to 36 display cells per line and 8 lines, reduced for larger fonts or margins.
 const graphemes = new Intl.Segmenter('pt-BR', { granularity:'grapheme' });
-export function slidesForText(text: string, theme:Theme = DEFAULT_THEME): string[] {
+export function slidesForText(text: string, theme:Theme = DEFAULT_THEME, reserveLines=0): string[] {
   const geometry = slideGeometry(theme);
   const columns = Math.max(8,Math.min(36,Math.floor(geometry.innerWidth/(theme.fontSize*(theme.font==='mono'?0.72:1)))));
-  const limit = Math.max(1,Math.min(8,Math.floor(geometry.innerHeight/(theme.fontSize*1.25))));
+  const limit = Math.max(1,Math.min(8,Math.floor(geometry.innerHeight/(theme.fontSize*1.25)))-Math.max(0,reserveLines));
   const pages: string[] = [];
   for (const part of text.replace(/\r\n?/g,'\n').replace(/\t/g,'    ').replace(/^[ \t]*---[ \t]*$/gm,'\n').split(/\n[ \t]*\n(?:[ \t]*\n)*/)) {
     let lines: string[] = [];

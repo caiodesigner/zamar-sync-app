@@ -1,7 +1,9 @@
+import { validateSong, type Song } from './songs';
+import { validatePassage, type Passage } from './bible';
 import { type EntityKind, type LibraryRecord, validateRecord } from './models';
 export type Theme = { id:string; title:string; ratio:'16:9'|'4:3'; background:string; foreground:string; image:string|null; overlay:number; font:'mono'|'sans'; fontSize:number; margin:number; align:'left'|'center'|'right' };
 export type TextContent = { id:string; title:string; text:string };
-export type ProgramItem = { id:string; title:string; text:string; source:{kind:'song'|'text';id:string}|null; theme:Theme };
+export type ProgramItem = { id:string; title:string; text:string; source:{kind:'song'|'text'|'bible';id:string}|null; theme:Theme; scripture?:Passage; songSnapshot?:Song };
 export type Program = { id:string; title:string; items:ProgramItem[] };
 export type ContentKind = 'text'|'theme'|'program';
 export type Content = TextContent|Theme|Program;
@@ -20,14 +22,15 @@ export function validateTheme(value:unknown):Theme {
 export function validateTextContent(value:unknown):TextContent {header(value);const t=value as TextContent;return {id:t.id,title:t.title.trim(),text:contentText(t.text)};}
 export function validateItem(value:unknown):ProgramItem {
  header(value);const i=value as ProgramItem;const source=i.source;
- if(source!==null && (!source || !['song','text'].includes(source.kind) || !validId(source.id)))throw new Error('Origem de item inválida.');
- return {id:i.id,title:i.title.trim(),text:contentText(i.text),source:source ? {kind:source.kind,id:source.id}:null,theme:validateTheme(i.theme)};
+ if(source!==null && (!source || !['song','text','bible'].includes(source.kind) || !validId(source.id)))throw new Error('Origem de item inválida.');
+ if(source?.kind==='bible' && (!i.scripture || i.scripture.versionId!==source.id))throw new Error('Origem da passagem não confere.');
+ return {id:i.id,title:i.title.trim(),text:contentText(i.text),source:source ? {kind:source.kind,id:source.id}:null,theme:validateTheme(i.theme),...(i.songSnapshot?{songSnapshot:validateSong(i.songSnapshot)}:{}),...(i.scripture?{scripture:validatePassage(i.scripture)}:{})};
 }
 export function validateProgram(value:unknown):Program {
  header(value);const p=value as Program;
  if(!Array.isArray(p.items) || p.items.length>100)throw new Error('Uma programação admite até 100 itens.');
  const items=p.items.map(validateItem);
- if(new Set(items.map(i=>i.id)).size!==items.length || items.reduce((n,i)=>n+i.text.length,0)>500000)throw new Error('Itens duplicados ou programação acima de 500 mil caracteres.');
+ if(new Set(items.map(i=>i.id)).size!==items.length || items.reduce((n,i)=>n+i.text.length+JSON.stringify(i.songSnapshot??null).length,0)>500000)throw new Error('Itens duplicados ou programação acima de 500 mil caracteres.');
  return {id:p.id,title:p.title.trim(),items};
 }
 export function validateContent(kind:ContentKind,value:unknown):Content {

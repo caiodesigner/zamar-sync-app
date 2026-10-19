@@ -83,7 +83,7 @@ export class Store {
     return this.record(this.db.prepare('SELECT * FROM records WHERE kind=? AND id=?').get(record.kind, record.id)!);
   }
   addAsset(name: string, mediaType: string, bytes: Buffer): Asset {
-    if (typeof name !== 'string' || !name.trim() || name.length > 200 || typeof mediaType !== 'string' || !mediaType.trim() || mediaType.length > 100 || !Buffer.isBuffer(bytes) || bytes.length > 10 * 1024 * 1024) throw new Error('Anexo inválido ou acima de 10 MiB.');
+    if (typeof name !== 'string' || !name.trim() || name.length > 200 || typeof mediaType !== 'string' || !mediaType.trim() || mediaType.length > 100 || !Buffer.isBuffer(bytes) || bytes.length > (mediaType==='application/vnd.zamar.bible+gzip'?64:10) * 1024 * 1024) throw new Error('Anexo inválido ou acima do limite de tamanho.');
     const asset: Asset = { id: randomUUID(), name, mediaType, sha256: hash(bytes), size: bytes.length };
     const path = join(this.directory, 'assets', asset.sha256);
     if (!existsSync(path)) atomicWrite(path, bytes);
@@ -101,6 +101,14 @@ export class Store {
     if (bytes.length !== asset.size || hash(bytes) !== digest) throw new Error('Imagem corrompida.');
     return bytes;
   }
+  assetBytes(digest: string): Buffer {
+    if (!digestPattern.test(digest)) throw new Error('Anexo inválido.');
+    const asset=this.assets().find(a=>a.sha256===digest);if(!asset || asset.size>(asset.mediaType==='application/vnd.zamar.bible+gzip'?64:10)*1024*1024)throw new Error('Anexo indisponível.');
+    const path=join(this.directory,'assets',digest);if(statSync(path).size!==asset.size)throw new Error('Anexo corrompido.');const bytes=readFileSync(path);if(hash(bytes)!==digest)throw new Error('Anexo corrompido.');return bytes;
+  }
+  pruneUnregisteredAsset(digest:string):void {if(digestPattern.test(digest) && !this.assets().some(a=>a.sha256===digest))rmSync(join(this.directory,'assets',digest),{force:true});}
+  atomic(action:()=>void):void {this.transaction(action);}
+  remove(kind:EntityKind,id:string):void {validateKind(kind);this.db.prepare('DELETE FROM records WHERE kind=? AND id=?').run(kind,id);}
   private assets(db = this.db): Asset[] { return db.prepare('SELECT * FROM assets').all().map(row => ({ id: String(row.id), name: String(row.name), mediaType: String(row.media_type), sha256: String(row.sha256), size: Number(row.size) })); }
   createBackup(destination: string): void {
     if (typeof destination !== 'string' || !destination.endsWith('.zamar-backup')) throw new Error('Escolha um arquivo com extensão .zamar-backup.');
@@ -117,7 +125,7 @@ export class Store {
         return { sha256, data: bytes.toString('base64') };
       });
       if (total > MAX_BYTES) throw new Error('Backup excede 128 MiB.');
-      const envelope = { format: 'zamar-backup', version: 1, schemaVersion: VERSION, createdAt: new Date().toISOString(), database: { sha256: hash(database), data: database.toString('base64') }, files };
+      const envelope = { format: 'zamar-backup', version: 2, schemaVersion: VERSION, createdAt: new Date().toISOString(), database: { sha256: hash(database), data: database.toString('base64') }, files };
       atomicWrite(destination, gzipSync(Buffer.from(JSON.stringify(envelope))));
     } finally { rmSync(snapshot, { force: true }); }
   }
@@ -126,7 +134,7 @@ export class Store {
     let value;
     try { value = JSON.parse(gunzipSync(readFileSync(source), { maxOutputLength: MAX_BYTES * 2 }).toString('utf8')); }
     catch { throw new Error('Backup inválido, corrompido ou sem permissão de leitura. Nenhum dado foi substituído.'); }
-    if (value?.format !== 'zamar-backup' || value.version !== 1 || ![1,VERSION].includes(value.schemaVersion) || !Array.isArray(value.files) || value.files.length > 10000) throw new Error('Formato ou versão de backup incompatível.');
+    if (value?.format !== 'zamar-backup' || ![1,2].includes(value.version) || ![1,VERSION].includes(value.schemaVersion) || !Array.isArray(value.files) || value.files.length > 10000) throw new Error('Formato ou versão de backup incompatível.');
     const decode = (entry: unknown) => {
       if (!entry || typeof entry !== 'object') throw new Error('Entrada de backup inválida.');
       const item = entry as { sha256: string; data: string };
@@ -140,7 +148,7 @@ export class Store {
     const files = new Map<string, Buffer>();
     for (const entry of value.files) {
       const bytes = decode(entry); total += bytes.length;
-      if (total > MAX_BYTES || bytes.length > 10 * 1024 * 1024 || files.has(entry.sha256)) throw new Error('Anexos duplicados ou acima do limite.');
+      if (total > MAX_BYTES || bytes.length > 64 * 1024 * 1024 || files.has(entry.sha256)) throw new Error('Anexos duplicados ou acima do limite.');
       files.set(entry.sha256, bytes);
     }
     if (total > MAX_BYTES) throw new Error('Backup acima do limite.');
@@ -158,7 +166,7 @@ export class Store {
       for (const row of settings) if (row.key === 'draft') validateText(row.value);
       const assets = this.assets(imported);
       if (new Set(assets.map(a => a.sha256)).size !== files.size) throw new Error('Manifesto de anexos inconsistente.');
-      for (const asset of assets) if (!files.has(asset.sha256) || files.get(asset.sha256)!.length !== asset.size || !/^[a-zA-Z0-9_-]{1,100}$/.test(asset.id) || !asset.name.trim() || asset.name.length > 200 || !asset.mediaType.trim() || asset.mediaType.length > 100) throw new Error('Anexo do backup inválido.');
+      for (const asset of assets) if (asset.size>(asset.mediaType==='application/vnd.zamar.bible+gzip'?64:10)*1024*1024 || !files.has(asset.sha256) || files.get(asset.sha256)!.length !== asset.size || !/^[a-zA-Z0-9_-]{1,100}$/.test(asset.id) || !asset.name.trim() || asset.name.length > 200 || !asset.mediaType.trim() || asset.mediaType.length > 100) throw new Error('Anexo do backup inválido.');
       const backups = join(this.directory, 'backups'); mkdirSync(backups, { recursive: true });
       const previous = join(backups, `auto-${Date.now()}-${randomUUID()}.zamar-backup`);
       this.createBackup(previous);

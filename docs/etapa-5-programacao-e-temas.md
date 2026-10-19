@@ -105,3 +105,5 @@ Geração: `ELECTRON_BUILDER_COMPRESSION_LEVEL=5 npx electron-builder --linux Ap
 | `zamar-sync-0.5.0-win-x64.zip` | 150.18 | `e9adb218fd9f5c005638d6f0721d3a82024574e0dcaf89cb3ef81d22240e1973` |
 
 Limpeza concluída: removidos seis arquivos 0.4.0 (três pacotes e três hashes). Permanecem apenas os pacotes 0.5.0, hashes, pastas atuais e dados locais preservados. Captura real em [modo apresentador](etapa-5-preview.png).
+
+**Histórico de distribuição:** pacotes 0.5.0 substituídos por 0.6.0. A entrega atual é a [etapa 7](etapa-7-cifras.md).

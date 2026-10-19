@@ -72,13 +72,13 @@ Programações usam identificador estável da tradução e snapshot dos trechos.
 
 As subtarefas detalham 6.1; não são novas etapas principais.
 
-- [ ] **6.1.a — Cadastro e estados vazios:** criar fluxo, campos, seletor `.sql` e mensagens. Conclusão: operador consegue selecionar arquivo sem alterar a biblioteca.
-- [ ] **6.1.b — Leitor restrito:** implementar parser e limites, com arquivos sintéticos. Conclusão: ler perfis documentados e rejeitar comandos e sintaxes fora do contrato sem executá-los.
-- [ ] **6.1.c — Detecção e mapeamento:** identificar tabelas e colunas e normalizar livros. Conclusão: ambos os perfis produzem registros equivalentes e ambiguidades são apresentadas.
-- [ ] **6.1.d — Prévia e validação:** mostrar cobertura, amostras, duplicatas e erros. Conclusão: cancelamento não modifica dados; conteúdo parcial exige confirmação.
-- [ ] **6.1.e — Persistência transacional:** importar, indexar, selecionar padrão e tratar substituição. Conclusão: reabrir mantém tradução e falhas não deixam importação parcial.
-- [ ] **6.1.f — Verificação integrada:** testar offline, arquivo removido após importação, restauração, caracteres especiais, comandos proibidos e limites. Conclusão: busca e projeção funcionam com os dados cadastrados, sem rede ou execução do script original.
+- [x] **6.1.a — Cadastro e estados vazios:** criar fluxo, campos, seletor `.sql` e mensagens. Conclusão: operador consegue selecionar arquivo sem alterar a biblioteca.
+- [x] **6.1.b — Leitor restrito:** implementar parser e limites, com arquivos sintéticos. Conclusão: ler perfis documentados e rejeitar comandos e sintaxes fora do contrato sem executá-los.
+- [x] **6.1.c — Detecção e mapeamento:** identificar tabelas e colunas e normalizar livros. Conclusão: ambos os perfis produzem registros equivalentes e ambiguidades são apresentadas.
+- [x] **6.1.d — Prévia e validação:** mostrar cobertura, amostras, duplicatas e erros. Conclusão: cancelamento não modifica dados; conteúdo parcial exige confirmação.
+- [x] **6.1.e — Persistência transacional:** importar, indexar, selecionar padrão e tratar substituição. Conclusão: reabrir mantém tradução e falhas não deixam importação parcial.
+- [x] **6.1.f — Verificação integrada:** testar offline, arquivo removido após importação, restauração, caracteres especiais, comandos proibidos e limites. Conclusão: busca e projeção funcionam com os dados cadastrados, sem rede ou execução do script original.
 
 ## Critérios de aceite finais
 
-O usuário importa gratuitamente um `.sql` compatível, confere a prévia e pesquisa/projeta os versículos depois de fechar e reabrir o aplicativo, com rede desligada e sem o arquivo original. Arquivos incompatíveis ou malformados geram explicação e preservam os dados. A implementação será realizada na etapa 6; esta revisão altera somente a documentação.
+O usuário importa gratuitamente um `.sql` compatível, confere a prévia e pesquisa/projeta os versículos depois de fechar e reabrir o aplicativo, com rede desligada e sem o arquivo original. Arquivos incompatíveis ou malformados geram explicação e preservam os dados. Implementado na versão 0.6.0. Consulte [entrega da etapa 6](etapa-6-biblia-offline.md) para limites efetivos, cobertura não certificada, testes e pacotes.

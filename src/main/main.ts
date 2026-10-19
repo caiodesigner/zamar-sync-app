@@ -1,3 +1,5 @@
+import { validateChordPage } from '../shared/chords';
+import { Bibles } from './bibles';
 import { DEFAULT_THEME, contentRecord, readContent, validateTheme, type Catalog, type ContentKind } from '../shared/content';
 import { imageDimensions } from './images';
 import { readSong, songRecord } from '../shared/songs';
@@ -34,7 +36,7 @@ try {
 let state: Snapshot = { revision: 0, text: '', theme: DEFAULT_THEME, hidden: false, black: true, outputOpen: false, mode: 'closed', status: 'Saída fechada' };
 function publish(patch: Partial<Snapshot> = {}) {
   const next = { ...state, ...patch, revision: state.revision + 1 };
-  if (Object.hasOwn(patch, 'text')) store.setSetting('presentation', JSON.stringify({ text: next.text, theme: next.theme, revision: next.revision }));
+  if (Object.hasOwn(patch, 'text')) store.setSetting('presentation', JSON.stringify({ text: next.text, chords:next.chords, theme: next.theme, revision: next.revision }));
   state = next;
   for (const window of [operator, output]) if (window && !window.isDestroyed()) window.webContents.send('state', state);
 }
@@ -125,6 +127,16 @@ app.whenReady().then(async () => {
       return store.addAsset(basename(path).slice(0,200),'image/png',image.toPNG()).sha256;
     });
     handle('hide-text', () => { if (!state.outputOpen) throw new Error('A apresentação está encerrada.'); publish({ hidden: !state.hidden }); });
+    const bibles=new Bibles(store);
+    handle('bible-catalog',()=>bibles.catalog());
+    handle('bible-select',async()=>{const selected=await dialog.showOpenDialog(operator!,{title:'Importar Bíblia SQL',properties:['openFile'],filters:[{name:'SQL UTF-8',extensions:['sql']}]});if(selected.canceled || !selected.filePaths[0])return null;return bibles.select(selected.filePaths[0]);});
+    handle('bible-cancel',()=>bibles.cancel());
+    handle('bible-preview',value=>{const p=value as {token:string;mapping:Parameters<Bibles['preview']>[1]};if(!p || typeof p.token!=='string' || !p.mapping)throw new Error('Mapeamento inválido.');return bibles.preview(p.token,p.mapping);});
+    handle('bible-import',async value=>{const p=value as {token:string;fields:Record<string,unknown>;mode:'new'|'copy'|'replace';replaceId:string|null;confirmed:boolean};if(!p || !p.fields)throw new Error('Cadastro inválido.');if(p.mode==='replace'){const affected=store.list('program').filter(record=>Array.isArray(record.data.items) && record.data.items.some((item:{source?:{kind?:string;id?:string}})=>item.source?.kind==='bible' && item.source.id===p.replaceId)).length;const answer=await dialog.showMessageBox(operator!,{type:'warning',message:'Substituir esta tradução?',detail:`${affected} programação(ões) com referências a esta tradução. Uma cópia de segurança será criada. Trechos preparados serão preservados; atualizar pela origem será uma ação separada.`,buttons:['Cancelar','Substituir'],defaultId:0,cancelId:0});if(answer.response!==1)return null;}return bibles.import(p.token,p.fields,p.mode,p.replaceId,p.confirmed===true);});
+    handle('bible-default',id=>{if(typeof id!=='string')throw new Error('Tradução inválida.');bibles.setDefault(id);});
+    handle('bible-query',value=>{const p=value as {id:string;request:Parameters<Bibles['query']>[1]};if(!p || typeof p.id!=='string' || !p.request)throw new Error('Consulta inválida.');return bibles.query(p.id,p.request);});
+    handle('bible-passage',value=>{const p=value as {id:string;reference:string};if(!p || typeof p.id!=='string' || typeof p.reference!=='string')throw new Error('Referência inválida.');return bibles.passage(p.id,p.reference);});
+    handle('bible-remove',async id=>{if(typeof id!=='string')throw new Error('Tradução inválida.');const affected=store.list('program').filter(p=>Array.isArray(p.data.items) && p.data.items.some((i:{source?:{kind?:string;id?:string}})=>i.source?.kind==='bible' && i.source.id===id)).length;const answer=await dialog.showMessageBox(operator!,{type:'warning',message:'Remover esta Bíblia?',detail:`${affected} programação(ões) com referências a esta tradução. As cópias preparadas serão preservadas. Uma cópia de segurança será criada.`,buttons:['Cancelar','Remover'],defaultId:0,cancelId:0});if(answer.response!==1)return false;bibles.remove(id);return true;});
     let maintenance = false;
     const maintain = async (action: () => Promise<unknown>) => {
       if (maintenance) throw new Error('Outra operação de backup ou restauração está em andamento.');
@@ -142,6 +154,7 @@ app.whenReady().then(async () => {
       if (source.canceled || !source.filePaths[0]) return null;
       const answer = await dialog.showMessageBox(operator!, { type: 'warning', message: 'Restaurar os dados deste backup?', detail: 'Isso substitui os dados salvos e descarta o alterações não salvas no conteúdo e na programação. Uma cópia dos dados atuais será criada antes da restauração. A saída será encerrada.', buttons: ['Cancelar', 'Restaurar'], defaultId: 0, cancelId: 0 });
       if (answer.response !== 1) return null;
+      bibles.cancel();
       const previousBackup = store.restoreBackup(source.filePaths[0]);
       const restored = initialPresentation(store.getSetting('presentation'));
       output?.close();
@@ -150,7 +163,7 @@ app.whenReady().then(async () => {
       return { draft: store.read(), previousBackup };
     }));
     handle('save', value => store.save(validateText(value)));
-    handle('present', value => { if (!state.outputOpen) throw new Error('Inicie a apresentação antes de apresentar.'); const payload = typeof value==='string' ? {text:value,theme:DEFAULT_THEME} : value as {text:unknown;theme:unknown}|null; if(!payload)throw new Error('Slide inválido.'); const text=validateText(payload.text);const theme=validateTheme(payload.theme);assertImage(theme);if(!text.trim())throw new Error('Informe um texto para apresentar.');publish({text,theme,black:false,hidden:false}); });
+    handle('present', value => { if (!state.outputOpen) throw new Error('Inicie a apresentação antes de apresentar.'); const payload = typeof value==='string' ? {text:value,theme:DEFAULT_THEME} : value as {text:unknown;theme:unknown;chords?:unknown}|null; if(!payload)throw new Error('Slide inválido.'); const text=validateText(payload.text);const theme=validateTheme(payload.theme);assertImage(theme);if(!text.trim())throw new Error('Informe um texto para apresentar.');publish({text,theme,chords:payload.chords?validateChordPage(payload.chords):undefined,black:false,hidden:false}); });
     handle('black', () => { if (!state.outputOpen) throw new Error('A apresentação está encerrada.'); publish({ black: !state.black }); });
     handle('close-output', () => {
       closeReason = 'Apresentação encerrada; controles disponíveis.';
@@ -215,7 +228,7 @@ app.whenReady().then(async () => {
       const choice = dialog.showMessageBoxSync(operator, { type: 'warning', message: 'Há alterações que ainda não foram salvas.', detail: 'Volte ao editor e salve o conteúdo para preservá-lo.', buttons: ['Continuar editando', 'Descartar e fechar'], defaultId: 0, cancelId: 0 });
       if (choice === 1) event.preventDefault();
     });
-    operator.on('closed', () => { operator = null; output?.close(); app.quit(); });
+    operator.on('closed', () => { bibles.cancel(); operator = null; output?.close(); app.quit(); });
 }).catch(error => { dialog.showErrorBox('Falha ao iniciar', String(error)); app.quit(); });
   app.on('window-all-closed', () => app.quit());
 app.on('will-quit', () => store?.close());

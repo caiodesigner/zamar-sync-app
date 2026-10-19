@@ -1,6 +1,7 @@
+import { validateMusic, parseChords, type Music } from './chords';
 import { validateRecord, type LibraryRecord } from './models';
 export type Section = { id: string; label: string; text: string };
-export type Song = { id: string; title: string; author: string; archived: boolean; sections: Section[]; sequence: string[] };
+export type Song = { id: string; title: string; author: string; archived: boolean; sections: Section[]; sequence: string[]; music?:Music };
 export function validateSong(value: unknown): Song {
   if (!value || typeof value !== 'object') throw new Error('Música inválida.');
   const s = value as Song;
@@ -12,11 +13,11 @@ export function validateSong(value: unknown): Song {
     ids.add(section.id); total += section.text.length;
   }
   if (total > 100000 || s.sequence.some(id => typeof id !== 'string' || !ids.has(id))) throw new Error('Texto muito longo ou sequência com seção inexistente.');
-  return { id: s.id, title: s.title.trim(), author: s.author.trim(), archived: s.archived, sections: s.sections.map(({id,label,text}) => ({id,label:label.trim(),text})), sequence: [...s.sequence] };
+  return { id: s.id, title: s.title.trim(), author: s.author.trim(), archived: s.archived, sections: s.sections.map(({id,label,text}) => ({id,label:label.trim(),text})), sequence: [...s.sequence], ...(s.music?{music:validateMusic(s.music)}:{}) };
 }
 export function songRecord(value: unknown, existing?: LibraryRecord): LibraryRecord {
   const s = validateSong(value); const now = new Date().toISOString();
-  return validateRecord({ id:s.id, kind:'song', title:s.title, data:{ schemaVersion:1, author:s.author, archived:s.archived, sections:s.sections, sequence:s.sequence }, createdAt:existing?.createdAt ?? now, updatedAt:now });
+  return validateRecord({ id:s.id, kind:'song', title:s.title, data:{ schemaVersion:2, ...(s.music?{music:s.music,notation:s.sections.map(section=>({id:section.id,lines:parseChords(section.text).lines}))}:{}), author:s.author, archived:s.archived, sections:s.sections, sequence:s.sequence }, createdAt:existing?.createdAt ?? now, updatedAt:now });
 }
 export function readSong(record: LibraryRecord): Song {
   return validateSong({ ...record.data, id:record.id, title:record.title });

@@ -280,25 +280,33 @@ Executar as tarefas na ordem das dependências. Cada tarefa deve produzir uma mu
 
 **Entrega técnica 0.5.0:** tarefas 5.1 a 5.4 implementadas. Programações, textos e temas persistem; cópias independentes exigem atualização explícita; imagens locais entram no backup. Evidências e limites em [etapa 5](etapa-5-programacao-e-temas.md). Homologação física continua nas etapas 1 e 9.
 
-**Contagem atual:** 18 de 44 tarefas principais concluídas; 26 pendentes. Restam cinco etapas de desenvolvimento (6 a 10), além das pendências anteriores de 1 e 2.
+**Contagem histórica ao entregar a etapa 5:** 18 de 44 tarefas principais concluídas; 26 pendentes. Restam cinco etapas de desenvolvimento (6 a 10), além das pendências anteriores de 1 e 2.
 
 ### Etapa 6 — Adicionar Bíblia offline
 
 **Dependência:** etapa 5 e contrato do importador definido em [importação de Bíblia SQL](importacao-biblia-sql.md).
 
-- [ ] **6.1** Implementar cadastro e importação de Bíblia `.sql`: seleção de arquivo, leitura restrita, mapeamento, prévia, validação, confirmação e gravação transacional. **Conclusão:** arquivo de esquema suportado é importado offline; tradução cadastrada persiste após reinício; arquivo inválido ou operação cancelada não deixa dados parciais. Executar as subtarefas 6.1.a a 6.1.f do documento do importador.
-- [ ] **6.2** Implementar referências e abreviações. **Conclusão:** referências válidas e inválidas produzem respostas previsíveis.
-- [ ] **6.3** Implementar pesquisa textual e navegação. **Conclusão:** consultas não dependem de rede.
-- [ ] **6.4** Projetar trechos e adicioná-los à programação. **Conclusão:** referência, versão e atribuições aparecem corretamente, sem corte.
+- [x] **6.1** Implementar cadastro e importação de Bíblia `.sql`: seleção de arquivo, leitura restrita, mapeamento, prévia, validação, confirmação e gravação transacional. **Conclusão:** arquivo de esquema suportado é importado offline; tradução cadastrada persiste após reinício; arquivo inválido ou operação cancelada não deixa dados parciais. Executar as subtarefas 6.1.a a 6.1.f do documento do importador.
+- [x] **6.2** Implementar referências e abreviações. **Conclusão:** referências válidas e inválidas produzem respostas previsíveis.
+- [x] **6.3** Implementar pesquisa textual e navegação. **Conclusão:** consultas não dependem de rede.
+- [x] **6.4** Projetar trechos e adicioná-los à programação. **Conclusão:** referência, versão e atribuições aparecem corretamente, sem corte.
+
+**Entrega técnica 0.6.0:** importador restrito em worker, prévia e mapeamento, persistência offline, referências, busca, navegação e snapshots de versículos. Cobertura não certificada exige confirmação; nenhum script é executado. Evidências e limites em [etapa 6](etapa-6-biblia-offline.md).
+
+**Contagem histórica ao entregar a etapa 6:** 22 de 44 tarefas principais concluídas; 22 pendentes. Restam quatro etapas de desenvolvimento (7 a 10), além das pendências anteriores de 1 e 2.
 
 ### Etapa 7 — Adicionar cifras
 
 **Dependência:** etapa 5.
 
-- [ ] **7.1** Documentar e implementar subconjunto de marcação aceito. **Conclusão:** acordes e letras podem ser editados e persistidos sem perder posições.
-- [ ] **7.2** Implementar transposição de acordes simples, compostos e baixos invertidos. **Conclusão:** casos conhecidos corretos; tokens desconhecidos preservados com aviso.
-- [ ] **7.3** Renderizar cifras e alternar modo de apresentação. **Conclusão:** acordes permanecem alinhados após mudança de tom, fonte e largura.
-- [ ] **7.4** Integrar cifras à programação e aos snapshots e verificar persistência completa. **Conclusão:** letra, acordes, posições e tons são recuperados após fechar e reabrir o app, inclusive no culto salvo.
+- [x] **7.1** Documentar e implementar subconjunto de marcação aceito. **Conclusão:** acordes e letras podem ser editados e persistidos sem perder posições.
+- [x] **7.2** Implementar transposição de acordes simples, compostos e baixos invertidos. **Conclusão:** casos conhecidos corretos; tokens desconhecidos preservados com aviso.
+- [x] **7.3** Renderizar cifras e alternar modo de apresentação. **Conclusão:** acordes permanecem alinhados após mudança de tom, fonte e largura.
+- [x] **7.4** Integrar cifras à programação e aos snapshots e verificar persistência completa. **Conclusão:** letra, acordes, posições e tons são recuperados após fechar e reabrir o app, inclusive no culto salvo.
+
+**Entrega técnica 0.7.0:** marcação inline, acordes ancorados, transposição de raiz/baixo, sustenidos/bemóis, modos letra/cifras e cópias completas na programação. Evidências, formato e limites em [etapa 7](etapa-7-cifras.md).
+
+**Contagem atual:** 26 de 44 tarefas principais concluídas; 18 pendentes. Restam três etapas (8 a 10), além das quatro tarefas anteriores pendentes de 1 e 2.
 
 ### Etapa 8 — Importação e recuperação
 

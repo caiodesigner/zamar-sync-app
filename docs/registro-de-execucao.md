@@ -155,3 +155,43 @@
 **Contagem:** 18/44 tarefas principais concluídas, 26 pendentes. Cinco etapas seguintes (6 a 10), além das pendências anteriores de 1 e 2.
 
 **Entrega e limpeza:** pacotes 0.5.0 Windows ZIP, Linux AppImage e tar.gz gerados, com SHA-256. Testes finais aprovados nos três formatos Linux. Verificados conteúdo embarcado de ambos os sistemas, CRC do ZIP e fluxo gzip/tar. Layout 4:3 no apresentador ajustado para manter prévia e itens acessíveis acima dos controles; teste de ocultação aguarda a pintura da interface após IPC. Seis arquivos 0.4.0 removidos e `release/data` preservada. Evidências e hashes em etapa-5-programacao-e-temas.md; captura em etapa-5-preview.png.
+
+
+## 18/10/2026 — Etapa 6: Bíblia SQL e consulta offline
+
+**Autorização:** avançar para a próxima etapa após a entrega 0.5.0.
+
+**Implementação 0.6.0:** leitor SQL em worker com UTF-8 estrito, limites de arquivo/tempo/memória e cancelamento. Lexer/parser de CREATE/INSERT literais, sem executar o arquivo. Dois perfis de mapeamento, resolução de livros, prévia com cobertura/amostras/erros e confirmação explícita de conteúdo parcial ou não certificado.
+
+**Persistência e consulta:** metadados e corpus normalizado imutável gravados em transação; SQLite de consulta separado e reconstruível. Cadastro, cópia identificada, substituição com backup e exclusão preservam programações. A tradução padrão só muda por escolha explícita, salvo a definição inicial. Consulta por abreviação/referência, pesquisa sem acentos e navegação por livro/capítulo.
+
+**Apresentação:** referência, versão e atribuição opcionais em cada página. Programações guardam snapshots bíblicos independentes e ID da tradução. Atualização da origem exige comando; seleção ou erro de referência preserva a saída ativa. Proteções de ensaio e monitor externo mantidas.
+
+**Verificação:** tipos, compilação e 34 testes unitários aprovados, incluindo corpus sintético de 31.680 versículos, limites, cancelamento ativo, falha transacional, duplicatas, cópias/default, substituição, fonte removida, referências e backup. Teste gráfico de desenvolvimento passou no fluxo completo de importação, consulta, reinício, projeção e restauração. Resultados dos pacotes finais em etapa-6-biblia-offline.md.
+
+**Backup:** envelope 2 para incluir corpus de até 64 MiB compactados, com limite total de 128 MiB; restauração continua aceitando envelopes anteriores. Imagens permanecem limitadas a 10 MiB. Biblioteca permanece no esquema 2.
+
+**Conclusão técnica:** tarefas 6.1 a 6.4 e subtarefas 6.1.a a 6.1.f concluídas. Cobertura não é certificada por versificação e requer confirmação. Não foram usados textos de traduções reais nos testes. Execução Windows, datashow físico e voluntários permanecem pendentes.
+
+**Próximo passo:** etapa 7, cifras estruturadas, transposição, alinhamento e integração aos snapshots.
+
+**Contagem:** 22/44 tarefas principais concluídas; 22 pendentes. Quatro etapas seguintes (7 a 10), além das pendências anteriores de 1 e 2.
+
+**Entrega e limpeza:** Windows ZIP e Linux AppImage/tar.gz 0.6.0 gerados com SHA-256. Testes finais passaram nos três formatos Linux, incluindo worker externo ao ASAR. Código embarcado verificado nos dois sistemas; CRC/fluxo gzip/tar aprovados. Seis arquivos 0.5.0 removidos, com dados preservados. Resultados, limites e hashes em etapa-6-biblia-offline.md; captura em etapa-6-preview.png.
+
+
+## 18/10/2026 — Etapa 7: cifras e transposição
+
+**Autorização:** seguir para a próxima etapa após a entrega da Bíblia offline.
+
+**Implementação 0.7.0:** marcação inline documentada, representação de linhas/letra/posições, transposição da raiz e baixo preservando qualificadores, tons original/apresentação independentes, escolha de acidentes e avisos para tokens desconhecidos. Modo letra ou letra com cifras usa paginação e componente compartilhados entre prévia e projeção.
+
+**Persistência:** músicas guardam marcação, posições e configuração musical. Programações guardam cópias completas, com ajustes musicais próprios e atualização explícita pela origem. Checkpoint inclui página estruturada, retomando fechado/preto. Backup inclui músicas, cifras, tons e cópias, com restauração e reabertura verificadas.
+
+**Verificação:** tipos, build e 38 testes de domínio aprovados. Fluxo gráfico verifica cadastro, transposição, aviso, somente letra, saída ativa preservada, cópia independente, limites da prévia, backup/restauração e reinício. Projeção externa simulada verifica acordes e ocultação com o mesmo renderizador, sem fullscreen nativo no monitor real. Evidências de distribuição em [etapa 7](etapa-7-cifras.md).
+
+**Conclusão técnica:** 7.1 a 7.4 concluídas. **Próximo passo:** etapa 8, importação com prévia, duplicatas, exportação e recuperação/salvamento automático seguro.
+
+**Contagem:** 26/44 tarefas principais concluídas e 18 pendentes. Três etapas seguintes (8 a 10), além das quatro tarefas pendentes de homologação/usabilidade das etapas 1 e 2. Windows físico, datashow real e voluntários continuam pendentes.
+
+**Entrega e limpeza:** Windows ZIP e Linux AppImage/tar.gz 0.7.0 gerados com SHA-256; todos os formatos Linux finais passaram nos testes gráficos. Inspeção dos dois pacotes confirmou os 63 arquivos compilados; ZIP/CRC e gzip/tar validados. Seis arquivos 0.6.0 removidos, mantendo os dados do operador. Resultados, hashes e captura em etapa-7-cifras.md.
