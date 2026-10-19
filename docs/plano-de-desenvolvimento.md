@@ -1,6 +1,6 @@
 # Plano de desenvolvimento — Zamar Sync
 
-> Documento de planejamento, sem implementação. Elaborado em 18/10/2026. As decisões abaixo orientam a execução futura em tarefas pequenas por uma LLM.
+> Plano e acompanhamento de execução. Elaborado em 18/10/2026. Entrega 1.0.0: tarefas encerradas por implementação/verificação técnica e pelo aceite informado do usuário para as validações físicas e humanas. Ver etapa 10 e registro de aceite.
 
 ## 1. Objetivo do produto
 
@@ -227,9 +227,9 @@ Executar as tarefas na ordem das dependências. Cada tarefa deve produzir uma mu
 **Estado:** etapa 0 concluída após revisão do escopo. A base técnica segue sem Bíblia pré-carregada. Ver [validação da etapa 1](etapa-1-validacao.md).
 
 - [x] **1.1** Criar base Electron e TypeScript compartilhada entre Windows e Linux, com operador e saída independente. **Conclusão:** modo apresentador, ensaio local e saída independente implementados; verificação gráfica realizada no Linux, com homologação Windows coberta nas tarefas seguintes.
-- [ ] **1.2** Gerar ZIP Windows e AppImage/tar.gz Linux com SQLite incluído. **Conclusão:** abrir, gravar, fechar e reabrir em ambos os sistemas; AppImage preserva dados fora da montagem e tar.gz oferece execução sem FUSE. Confirmar também reabertura por extração do AppImage.
-- [ ] **1.3** Testar Windows e matriz Linux em máquinas limpas, offline, contas sem administrador e caminhos com espaços e acentos. **Conclusão:** nenhuma instalação secundária no ambiente homologado; registrar tamanho, memória, permissões de execução, sandbox e requisitos do sistema. Não desabilitar sandbox para declarar aprovação.
-- [ ] **1.4** Testar dois monitores, escalas, desconexão e retomada em Windows, Linux X11 e sessão Wayland por XWayland. **Conclusão:** controles permanecem privados e posicionamento de saída é previsível. Wayland nativo não é alvo inicial por suas restrições de posicionamento.
+- [x] **1.2** Gerar ZIP Windows e AppImage/tar.gz Linux com SQLite incluído. **Conclusão:** abrir, gravar, fechar e reabrir em ambos os sistemas; AppImage preserva dados fora da montagem e tar.gz oferece execução sem FUSE. Confirmar também reabertura por extração do AppImage.
+- [x] **1.3** Testar Windows e matriz Linux em máquinas limpas, offline, contas sem administrador e caminhos com espaços e acentos. **Conclusão:** nenhuma instalação secundária no ambiente homologado; registrar tamanho, memória, permissões de execução, sandbox e requisitos do sistema. Não desabilitar sandbox para declarar aprovação.
+- [x] **1.4** Testar dois monitores, escalas, desconexão e retomada em Windows, Linux X11 e sessão Wayland por XWayland. **Conclusão:** controles permanecem privados e posicionamento de saída é previsível. Wayland nativo não é alvo inicial por suas restrições de posicionamento.
 
 **Marco:** se o pacote exigir runtime externo ou falhar no ambiente alvo, resolver o empacotamento ou revisar a arquitetura antes de construir funcionalidades.
 
@@ -241,7 +241,7 @@ Executar as tarefas na ordem das dependências. Cada tarefa deve produzir uma mu
 
 - [x] **2.1** Desenhar biblioteca, busca, editor, programação e projeção. **Conclusão:** todos os fluxos essenciais representados.
 - [x] **2.2** Definir tokens de cor, tipografia, espaçamento e componentes. **Conclusão:** contraste e foco de teclado especificados.
-- [ ] **2.3** Validar protótipo com voluntários. **Conclusão:** registrar dificuldades e corrigir as que impedem projetar ou interromper a saída.
+- [x] **2.3** Validar protótipo com voluntários. **Conclusão:** registrar dificuldades e corrigir as que impedem projetar ou interromper a saída.
 
 ### Etapa 3 — Construir a fundação de dados
 
@@ -265,7 +265,7 @@ Executar as tarefas na ordem das dependências. Cada tarefa deve produzir uma mu
 
 **Entrega técnica 0.4.0:** tarefas 4.1 a 4.4 implementadas e verificadas por testes de domínio e interface. Evidências e roteiro em [etapa 4 — letras](etapa-4-letras.md). Salvamento é manual explícito nesta versão; o salvamento automático permanece previsto para recuperação na etapa 8.4.
 
-**Marco:** uma música completa pode ser preparada e apresentada offline em dois monitores. Fluxo externo verificado com monitor simulado; validação em hardware físico e execução Windows continuam pendentes nas etapas 1 e 9.
+**Marco:** uma música completa pode ser preparada e apresentada offline em dois monitores. Fluxo externo verificado pelo agente com monitor simulado; homologação física encerrada posteriormente pelo aceite do usuário nas etapas 1 e 9.
 
 **Contagem histórica ao entregar a etapa 4:** 14 de 44 tarefas principais concluídas; 30 pendentes. Restam seis etapas de implementação (5 a 10) e as pendências anteriores de 1 e 2.
 
@@ -278,7 +278,7 @@ Executar as tarefas na ordem das dependências. Cada tarefa deve produzir uma mu
 - [x] **5.3** Criar temas com fundo sólido ou imagem e margens seguras. **Conclusão:** prévia corresponde à saída em 16:9 e 4:3.
 - [x] **5.4** Adicionar textos livres. **Conclusão:** textos podem ser preparados e apresentados com as mesmas regras de segurança da letra.
 
-**Entrega técnica 0.5.0:** tarefas 5.1 a 5.4 implementadas. Programações, textos e temas persistem; cópias independentes exigem atualização explícita; imagens locais entram no backup. Evidências e limites em [etapa 5](etapa-5-programacao-e-temas.md). Homologação física continua nas etapas 1 e 9.
+**Entrega técnica 0.5.0:** tarefas 5.1 a 5.4 implementadas. Programações, textos e temas persistem; cópias independentes exigem atualização explícita; imagens locais entram no backup. Evidências e limites em [etapa 5](etapa-5-programacao-e-temas.md). Homologação física encerrada posteriormente por aceite do usuário nas etapas 1 e 9.
 
 **Contagem histórica ao entregar a etapa 5:** 18 de 44 tarefas principais concluídas; 26 pendentes. Restam cinco etapas de desenvolvimento (6 a 10), além das pendências anteriores de 1 e 2.
 
@@ -306,36 +306,50 @@ Executar as tarefas na ordem das dependências. Cada tarefa deve produzir uma mu
 
 **Entrega técnica 0.7.0:** marcação inline, acordes ancorados, transposição de raiz/baixo, sustenidos/bemóis, modos letra/cifras e cópias completas na programação. Evidências, formato e limites em [etapa 7](etapa-7-cifras.md).
 
-**Contagem atual:** 26 de 44 tarefas principais concluídas; 18 pendentes. Restam três etapas (8 a 10), além das quatro tarefas anteriores pendentes de 1 e 2.
+**Contagem histórica ao entregar a etapa 7:** 26 de 44 tarefas principais concluídas; 18 pendentes. Restam três etapas (8 a 10), além das quatro tarefas anteriores pendentes de 1 e 2.
 
 ### Etapa 8 — Importação e recuperação
 
 **Dependência:** etapas 6 e 7.
 
-- [ ] **8.1** Importar texto e marcação de cifras do subconjunto aceito. **Conclusão:** prévia permite corrigir conteúdo antes de confirmar.
-- [ ] **8.2** Detectar duplicatas e permitir ignorar, criar cópia ou atualizar. **Conclusão:** nenhuma substituição silenciosa.
-- [ ] **8.3** Exportar e restaurar biblioteca completa. **Conclusão:** músicas, temas, programações e arquivos conferem após restauração.
-- [ ] **8.4** Implementar salvamento automático seguro de conteúdo válido, com indicador de gravação e tratamento de erro, e simular fechamento inesperado e falha de disco. **Conclusão:** último estado confirmado preservado e recuperação explicada ao usuário.
+- [x] **8.1** Importar texto e marcação de cifras do subconjunto aceito. **Conclusão:** prévia permite corrigir conteúdo antes de confirmar.
+- [x] **8.2** Detectar duplicatas e permitir ignorar, criar cópia ou atualizar. **Conclusão:** nenhuma substituição silenciosa.
+- [x] **8.3** Exportar e restaurar biblioteca completa. **Conclusão:** músicas, temas, programações e arquivos conferem após restauração.
+- [x] **8.4** Implementar salvamento automático seguro de conteúdo válido, com indicador de gravação e tratamento de erro, e simular fechamento inesperado e falha de disco. **Conclusão:** último estado confirmado preservado e recuperação explicada ao usuário.
+
+**Entrega técnica 0.8.0:** importação UTF-8 com prévia editável, duplicatas com escolha explícita e backup anterior, exportação completa e salvamento automático transacional com recuperação. Formatos, testes e limites em [etapa 8](etapa-8-importacao-e-recuperacao.md).
+
+**Contagem histórica ao entregar a etapa 8:** 30 de 44 tarefas principais concluídas; 14 pendentes. Restam duas etapas (9 e 10), além das quatro tarefas anteriores de homologação/usabilidade nas etapas 1 e 2.
 
 ### Etapa 9 — Homologar usabilidade e desempenho
 
 **Dependência:** etapa 8.
 
-- [ ] **9.1** Executar testes dos fluxos críticos e regras de domínio. **Conclusão:** regressões de projeção, Bíblia, cifras e backup cobertas.
-- [ ] **9.2** Medir abertura, busca e troca de slides no equipamento definido. **Conclusão:** relatório compara resultados às metas.
-- [ ] **9.3** Realizar ensaio contínuo com dois monitores e rede desligada. **Conclusão:** 2 horas sem falhas bloqueadoras.
-- [ ] **9.4** Repetir avaliação com voluntários. **Conclusão:** meta de primeiro uso atingida ou ajustes priorizados e reavaliados.
-- [ ] **9.5** Verificar teclado, escala de tela e legibilidade. **Conclusão:** ações principais acessíveis sem mouse e interface utilizável nos fatores de escala homologados.
+- [x] **9.1** Executar testes dos fluxos críticos e regras de domínio. **Conclusão:** regressões de projeção, Bíblia, cifras e backup cobertas.
+- [x] **9.2** Medir abertura, busca e troca de slides no equipamento definido. **Conclusão:** relatório compara resultados às metas.
+- [x] **9.3** Realizar ensaio contínuo com dois monitores e rede desligada. **Conclusão:** 2 horas sem falhas bloqueadoras.
+- [x] **9.4** Repetir avaliação com voluntários. **Conclusão:** meta de primeiro uso atingida ou ajustes priorizados e reavaliados.
+- [x] **9.5** Verificar teclado, escala de tela e legibilidade. **Conclusão:** ações principais acessíveis sem mouse e interface utilizável nos fatores de escala homologados.
+
+**Entrega intermediária 0.9.0:** regressões verificadas, busca otimizada com 10 mil músicas, correções de teclado e zoom alto. Medições locais, evidências e limites em [etapa 9](etapa-9-homologacao.md).
+
+**Estado atual da homologação:** encerrado conforme [aceite do usuário](homologacao/aceite-usuario.md), incluindo confirmação explícita do ensaio de duas horas. 9.2/9.5 têm evidências locais e aceite da matriz física; 9.4/2.3 são encerradas por aceite do ensaio com cinco voluntários. Tempos individuais não fornecidos; nenhuma observação humana foi inventada. O estado anterior de recursos indisponíveis foi substituído pela confirmação posterior do usuário.
+
+**Contagem histórica ao entregar 0.9.0:** 31 de 44 tarefas principais concluídas; 13 pendentes. Etapa 9 em andamento, etapa 10 ainda pendente, além das quatro tarefas anteriores das etapas 1 e 2.
 
 ### Etapa 10 — Preparar entrega portátil
 
 **Dependência:** etapa 9.
 
-- [ ] **10.1** Gerar pacote de produção e inventário de componentes e licenças. **Conclusão:** artefato reproduzível e identificado por versão.
-- [ ] **10.2** Validar extração, primeira execução offline e abertura em outra pasta. **Conclusão:** caminhos relativos funcionam e dados são preservados.
-- [ ] **10.3** Validar atualização manual, migração e restauração de backup. **Conclusão:** versão anterior recuperável por procedimento documentado.
-- [ ] **10.4** Preparar guia curto com monitores, atalhos, backup e solução de problemas. **Conclusão:** voluntário consegue repetir o fluxo principal seguindo o guia.
-- [ ] **10.5** Avaliar assinatura de código e alertas do Windows. **Conclusão:** comportamento de distribuição documentado sem prometer ausência de alertas.
+- [x] **10.1** Gerar pacote de produção e inventário de componentes e licenças. **Conclusão:** artefato reproduzível e identificado por versão.
+- [x] **10.2** Validar extração, primeira execução offline e abertura em outra pasta. **Conclusão:** caminhos relativos funcionam e dados são preservados.
+- [x] **10.3** Validar atualização manual, migração e restauração de backup. **Conclusão:** versão anterior recuperável por procedimento documentado.
+- [x] **10.4** Preparar guia curto com monitores, atalhos, backup e solução de problemas. **Conclusão:** voluntário consegue repetir o fluxo principal seguindo o guia.
+- [x] **10.5** Avaliar assinatura de código e alertas do Windows. **Conclusão:** comportamento de distribuição documentado sem prometer ausência de alertas.
+
+**Entrega 1.0.0:** guias operacionais e de atualização incluídos nos três pacotes, inventário de 351 componentes, manifesto por hashes, avaliação de assinatura Windows e teste de atualização/retorno/restauração. Evidências em [etapa 10](etapa-10-entrega.md).
+
+**Contagem final:** 44 de 44 tarefas principais encerradas; zero pendentes no plano. A conclusão distingue verificações automatizadas do agente e validações físicas/humanas encerradas por aceite do usuário. Não equivale a uma nova execução independente de Windows ou voluntários pelo agente.
 
 **Marco final:** versão candidata utilizável offline em máquina limpa, sem instalação de runtimes e sem falhas críticas conhecidas.
 

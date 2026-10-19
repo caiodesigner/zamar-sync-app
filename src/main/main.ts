@@ -1,3 +1,4 @@
+import { LibraryTransfer } from './library-transfer';
 import { validateChordPage } from '../shared/chords';
 import { Bibles } from './bibles';
 import { DEFAULT_THEME, contentRecord, readContent, validateTheme, type Catalog, type ContentKind } from '../shared/content';
@@ -85,6 +86,12 @@ app.whenReady().then(async () => {
       if (event.sender.id !== operator?.webContents.id || event.senderFrame !== event.sender.mainFrame) throw new Error('Comando exclusivo do operador');
       return action(requestPayload(request));
     });
+    const transfer=new LibraryTransfer(store);
+    handle('import-select',async()=>{const selected=await dialog.showOpenDialog(operator!,{title:'Importar texto ou cifra',properties:['openFile'],filters:[{name:'Texto e cifras UTF-8',extensions:['txt','pro','chordpro']}]});return selected.canceled||!selected.filePaths[0]?null:transfer.select(selected.filePaths[0]);});
+    handle('import-preview',value=>transfer.preview(value));
+    handle('import-confirm',value=>{const p=value as {draft:unknown;choice:Parameters<LibraryTransfer['confirm']>[1];target:Parameters<LibraryTransfer['confirm']>[2]};if(!p)throw new Error('Importação inválida.');return transfer.confirm(p.draft,p.choice,p.target);});
+    handle('recovery',()=>transfer.recovery());
+    handle('autosave',value=>{const p=value as {epoch:unknown;entries:unknown};if(!p)throw new Error('Salvamento inválido.');return transfer.autosave(p.epoch,p.entries);});
     handle('list-records', kind => store.list(validateKind(kind)));
     handle('save-record', record => store.put(record));
     handle('list-songs', () => {
@@ -155,7 +162,7 @@ app.whenReady().then(async () => {
       const answer = await dialog.showMessageBox(operator!, { type: 'warning', message: 'Restaurar os dados deste backup?', detail: 'Isso substitui os dados salvos e descarta o alterações não salvas no conteúdo e na programação. Uma cópia dos dados atuais será criada antes da restauração. A saída será encerrada.', buttons: ['Cancelar', 'Restaurar'], defaultId: 0, cancelId: 0 });
       if (answer.response !== 1) return null;
       bibles.cancel();
-      const previousBackup = store.restoreBackup(source.filePaths[0]);
+      const previousBackup = store.restoreBackup(source.filePaths[0]);transfer.reset();
       const restored = initialPresentation(store.getSetting('presentation'));
       output?.close();
       state = { ...restored, revision: Math.max(restored.revision, state.revision + 1) };

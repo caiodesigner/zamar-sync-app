@@ -32,11 +32,14 @@ const { join, resolve } = require('node:path');
   execFileSync('tar', ['-xzf', resolve('release', source), '--strip-components=1', '-C', appPath]);
  } else cpSync(resolve(windows ? 'release/win-unpacked' : 'release/linux-unpacked'), appPath, {recursive:true});
  let app;
- async function launch() { return electron.launch({executablePath, args: format === 'dev' ? [appPath] : [], env, timeout:30000}); }
+ async function launch() { const launched=await electron.launch({chromiumSandbox:true,executablePath, args: format === 'dev' ? [appPath] : [], env, timeout:30000});await launched.context().setOffline(true);return launched; }
  try {
   app = await launch();
+  assert.equal(await app.evaluate(({app})=>app.commandLine.hasSwitch('no-sandbox')),false,'Tests must keep Chromium sandbox enabled');
   let page = await app.firstWindow();
   await page.getByRole('heading', {name:'Sua mensagem em destaque.'}).waitFor();
+  if((process.env.ZAMAR_SMOKE_FLOW==='qualification'||process.argv.includes('--qualification'))){({app,page}=await require('./qualification-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
+  if(process.env.ZAMAR_SMOKE_FLOW==='transfer'){({app,page}=await require('./transfer-flow.cjs')({app,page,launch,directory}));console.log(`Format: ${format}`);return;}
   const text = '[C]Canção de teste\n[G/B]Coração e fé 🎵';
   await page.locator('textarea').fill(text);
   await page.getByRole('button', {name:'Salvar texto',exact:true}).click();
@@ -50,6 +53,7 @@ const { join, resolve } = require('node:path');
   const initial = await page.evaluate(() => window.zamar.initial());
   assert.equal(initial.draft, text); assert(initial.dataPath.startsWith(appPath));
   await page.keyboard.press('Control+f');
+  await page.waitForFunction(()=>document.activeElement?.getAttribute('aria-label')==='Buscar na biblioteca');
   assert.equal(await page.getByRole('textbox',{name:'Buscar na biblioteca',exact:true}).evaluate(el => document.activeElement === el),true);
   await page.getByRole('textbox',{name:'Buscar na biblioteca',exact:true}).fill('sem resultado aqui');
   await page.getByRole('heading',{name:'Nenhum resultado',exact:true}).waitFor();
@@ -127,6 +131,9 @@ const { join, resolve } = require('node:path');
   const publicInitial = await output.evaluate(() => window.zamar.initial());
   assert.equal(publicInitial.draft, ''); assert.equal(publicInitial.dataPath, '');
   await assert.rejects(() => output.evaluate(() => window.zamar.listRecords('song')));
+  await assert.rejects(() => output.evaluate(() => window.zamar.recovery()));
+  await assert.rejects(() => output.evaluate(() => window.zamar.autosave('invalid',[])));
+  await assert.rejects(() => output.evaluate(() => window.zamar.selectImport()));
   await assert.rejects(() => page.evaluate(() => window.zamar.save(42)));
   await page.evaluate(() => window.zamar.black());
   await output.waitForFunction(() => document.querySelector('.projection').textContent === '');
@@ -242,6 +249,8 @@ const { join, resolve } = require('node:path');
   ({app,page}=await require('./program-flow.cjs')({app,page,launch,directory}));
   ({app,page}=await require('./bible-flow.cjs')({app,page,launch,directory}));
   ({app,page}=await require('./chord-flow.cjs')({app,page,launch,directory}));
+  ({app,page}=await require('./transfer-flow.cjs')({app,page,launch,directory}));
+  ({app,page}=await require('./qualification-flow.cjs')({app,page}));
   console.log('PASS: library example, prepared blocks, session queue, help and Bible flow dialogs.');
   console.log(`Format: ${format}; platform: ${process.platform}`);
   console.log('PASS: Electron application, SQLite reopen, accented portable path, isolated renderer, separate output, explicit presentation, blackout, rejected output command, simulated external monitor removal.');

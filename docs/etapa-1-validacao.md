@@ -1,5 +1,8 @@
 # Etapa 1 — Base técnica e validação
 
+> Estado atual em 18/10/2026: pendências físicas/humanas encerradas conforme [aceite informado pelo usuário](homologacao/aceite-usuario.md). O texto abaixo preserva o roteiro e as evidências históricas; resultados finais na [etapa 10](etapa-10-entrega.md). Não houve nova execução física ou humana pelo agente.
+
+
 > Artefatos deste relatório são históricos. Os pacotes disponíveis em release foram atualizados para 0.3.1; versões anteriores foram removidas na limpeza solicitada.
 
 Data: 18/10/2026. Protótipo 0.1.0, não homologado para uso em culto.

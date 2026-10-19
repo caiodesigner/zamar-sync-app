@@ -1,0 +1,206 @@
+{
+  "date": "2026-10-18",
+  "appVersion": "0.9.0",
+  "environment": {
+    "os": "linux",
+    "release": "7.0.0-38-generic",
+    "architecture": "x64",
+    "cpu": "Intel(R) Core(TM) i5-9300H CPU @ 2.40GHz",
+    "logicalCpus": 8,
+    "totalMemoryGiB": 7.590312957763672,
+    "session": "x11",
+    "storage": "SSD not verified",
+    "execution": "current production renderer, Electron development runtime, disposable data",
+    "electron": {
+      "versions": {
+        "node": "24.22.0",
+        "acorn": "8.18.0",
+        "ada": "4.0.0",
+        "amaro": "1.1.11",
+        "ares": "1.34.8",
+        "brotli": "1.2.0",
+        "cldr": "48.0",
+        "icu": "78.2",
+        "llhttp": "9.4.3",
+        "merve": "1.2.2",
+        "modules": "149",
+        "napi": "10",
+        "nbytes": "0.1.4",
+        "ncrypto": "0.0.1",
+        "nghttp2": "1.70.0",
+        "nghttp3": "",
+        "ngtcp2": "",
+        "openssl": "0.0.0",
+        "simdjson": "4.6.11",
+        "simdutf": "7.7.0",
+        "sqlite": "3.53.4",
+        "tz": "2026d",
+        "undici": "7.29.1",
+        "unicode": "17.0",
+        "uv": "1.52.1",
+        "uvwasi": "0.0.23",
+        "v8": "15.2.124.43-electron.0",
+        "zlib": "1.3.2.1-motley",
+        "zstd": "1.6.0",
+        "electron": "44.9.0",
+        "chrome": "152.0.7977.167"
+      },
+      "displays": [
+        {
+          "width": 1920,
+          "height": 1080,
+          "scaleFactor": 1
+        }
+      ],
+      "sandboxSwitch": false
+    }
+  },
+  "measurements": {
+    "startupEmpty": {
+      "samples": 3,
+      "minMs": 832.662376,
+      "medianMs": 936.3003040000001,
+      "p95Ms": 1162.90195,
+      "maxMs": 1162.90195,
+      "rawMs": [
+        832.662376,
+        936.3003040000001,
+        1162.90195
+      ]
+    },
+    "startup10000Songs": {
+      "samples": 3,
+      "minMs": 858.9293989999996,
+      "medianMs": 976.0465679999998,
+      "p95Ms": 1234.9010179999996,
+      "maxMs": 1234.9010179999996,
+      "rawMs": [
+        1234.9010179999996,
+        976.0465679999998,
+        858.9293989999996
+      ]
+    },
+    "initialLibraryDomItems": 100,
+    "search10000Songs": {
+      "samples": 30,
+      "minMs": 27.600000000093132,
+      "medianMs": 31.300000000279397,
+      "p95Ms": 32.200000000186265,
+      "maxMs": 32.5,
+      "rawMs": [
+        32,
+        31.399999999906868,
+        31.5,
+        31.5,
+        31.299999999813735,
+        31.600000000093132,
+        31.399999999906868,
+        31.800000000279397,
+        32.200000000186265,
+        29.800000000279397,
+        31.199999999720603,
+        31.300000000279397,
+        30.899999999906868,
+        29,
+        30.299999999813735,
+        31.899999999906868,
+        31.600000000093132,
+        30.799999999813735,
+        31.199999999720603,
+        32,
+        30.799999999813735,
+        30.600000000093132,
+        31.59999999962747,
+        30.100000000093132,
+        28.5,
+        31.100000000093132,
+        31.800000000279397,
+        32.5,
+        31,
+        27.600000000093132
+      ]
+    },
+    "libraryDomItems": 100,
+    "loadMoreWorks": true,
+    "commandToLocalPreview": {
+      "samples": 40,
+      "minMs": 45.200000000186265,
+      "medianMs": 47.200000000186265,
+      "p95Ms": 48.799999999813735,
+      "maxMs": 58.700000000186265,
+      "rawMs": [
+        58.700000000186265,
+        49,
+        45.40000000037253,
+        45.8000000002794,
+        46.10000000009313,
+        47.40000000037253,
+        48.299999999813735,
+        46.39999999990687,
+        47.5,
+        48.39999999990687,
+        48.700000000186265,
+        45.40000000037253,
+        48.39999999990687,
+        45.5,
+        46.90000000037253,
+        45.6999999997206,
+        47.200000000186265,
+        47.700000000186265,
+        45.5,
+        47.5,
+        48.799999999813735,
+        45.5,
+        47.90000000037253,
+        45.6999999997206,
+        45.6999999997206,
+        45.700000000186265,
+        47.6999999997206,
+        48.1999999997206,
+        46.1999999997206,
+        45.6999999997206,
+        45.40000000037253,
+        48.299999999813735,
+        48.60000000009313,
+        48.200000000186265,
+        45.200000000186265,
+        46.5,
+        45.60000000009313,
+        46.10000000009313,
+        47.700000000186265,
+        48.3000000002794
+      ]
+    },
+    "memory": [
+      {
+        "type": "Browser",
+        "workingSetKiB": 205932,
+        "peakWorkingSetKiB": 208360
+      },
+      {
+        "type": "GPU",
+        "workingSetKiB": 152720,
+        "peakWorkingSetKiB": 152720
+      },
+      {
+        "type": "Utility",
+        "workingSetKiB": 74656,
+        "peakWorkingSetKiB": 74656
+      },
+      {
+        "type": "Tab",
+        "workingSetKiB": 198164,
+        "peakWorkingSetKiB": 198660
+      }
+    ],
+    "note": "Memory snapshot, not a 2-hour trend."
+  },
+  "limitations": [
+    "Local environment; not the Windows/Linux reference-machine matrix.",
+    "No physical two-monitor or OS DPI certification.",
+    "Frame observations use DOM and two requestAnimationFrame callbacks; no photometric measurement.",
+    "Network adapter not disabled by this script; the application blocks remote requests.",
+    "Repeated process starts with uncontrolled OS cache, not guaranteed cold starts."
+  ],
+  "result": "Measurements completed"
+}

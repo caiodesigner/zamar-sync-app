@@ -1,0 +1,570 @@
+{
+  "date": "2026-10-18",
+  "version": "0.8.0",
+  "scope": "Renderer zoom in this Linux session; not OS DPI certification",
+  "scales": [
+    {
+      "viewport": {
+        "width": 1366,
+        "height": 768
+      },
+      "horizontalOverflow": false,
+      "footer": {
+        "x": 24,
+        "y": 694,
+        "right": 1327,
+        "bottom": 768,
+        "width": 1303,
+        "height": 74
+      },
+      "prepared": {
+        "x": 41,
+        "y": 327.28125,
+        "right": 588.546875,
+        "bottom": 635.28125,
+        "width": 547.546875,
+        "height": 308
+      },
+      "live": {
+        "x": 801.1875,
+        "y": 305.53125,
+        "right": 1121.1875,
+        "bottom": 485.53125,
+        "width": 320,
+        "height": 180
+      },
+      "buttons": [
+        {
+          "label": "→",
+          "x": 764.875,
+          "y": 711.5,
+          "right": 806.875,
+          "bottom": 751.5
+        },
+        {
+          "label": "Apresentar ↗",
+          "x": 814.875,
+          "y": 711.5,
+          "right": 1014.875,
+          "bottom": 751.5
+        },
+        {
+          "label": "Ocultar texto",
+          "x": 1032.875,
+          "y": 711.5,
+          "right": 1129,
+          "bottom": 751.5
+        },
+        {
+          "label": "Tela pretaB",
+          "x": 1147,
+          "y": 711,
+          "right": 1327,
+          "bottom": 752
+        }
+      ],
+      "size": {
+        "width": 1366,
+        "height": 768
+      },
+      "zoom": 1
+    },
+    {
+      "viewport": {
+        "width": 1093,
+        "height": 614
+      },
+      "horizontalOverflow": false,
+      "footer": {
+        "x": 24,
+        "y": 540.4000244140625,
+        "right": 1056.800048828125,
+        "bottom": 614.4000244140625,
+        "width": 1032.800048828125,
+        "height": 74
+      },
+      "prepared": {
+        "x": 44.79999923706055,
+        "y": 350.5,
+        "right": 364.79999923706055,
+        "bottom": 530.5,
+        "width": 320,
+        "height": 180
+      },
+      "live": {
+        "x": 645.7625122070312,
+        "y": 324.75,
+        "right": 965.7625122070312,
+        "bottom": 504.75,
+        "width": 320,
+        "height": 180
+      },
+      "buttons": [
+        {
+          "label": "→",
+          "x": 495.07501220703125,
+          "y": 557.7999877929688,
+          "right": 537.0750122070312,
+          "bottom": 597.7999877929688
+        },
+        {
+          "label": "Apresentar ↗",
+          "x": 545.0750122070312,
+          "y": 557.7999877929688,
+          "right": 745.0750122070312,
+          "bottom": 597.7999877929688
+        },
+        {
+          "label": "Ocultar texto",
+          "x": 763.0750122070312,
+          "y": 557.7999877929688,
+          "right": 858.8000106811523,
+          "bottom": 597.7999877929688
+        },
+        {
+          "label": "Tela pretaB",
+          "x": 876.7999877929688,
+          "y": 557.4000244140625,
+          "right": 1056.7999877929688,
+          "bottom": 598.200023651123
+        }
+      ],
+      "size": {
+        "width": 1366,
+        "height": 768
+      },
+      "zoom": 1.25
+    },
+    {
+      "viewport": {
+        "width": 911,
+        "height": 512
+      },
+      "horizontalOverflow": false,
+      "footer": {
+        "x": 24,
+        "y": 438,
+        "right": 876.6666870117188,
+        "bottom": 512,
+        "width": 852.6666870117188,
+        "height": 74
+      },
+      "prepared": {
+        "x": 44.66666793823242,
+        "y": 402.07293701171875,
+        "right": 364.6666679382324,
+        "bottom": 582.0729370117188,
+        "width": 320,
+        "height": 180
+      },
+      "live": {
+        "x": 542.1458740234375,
+        "y": 376.32293701171875,
+        "right": 862.1458740234375,
+        "bottom": 556.3229370117188,
+        "width": 320,
+        "height": 180
+      },
+      "buttons": [
+        {
+          "label": "→",
+          "x": 315.2083435058594,
+          "y": 455.3333435058594,
+          "right": 357.2083435058594,
+          "bottom": 495.3333435058594
+        },
+        {
+          "label": "Apresentar ↗",
+          "x": 365.2083435058594,
+          "y": 455.3333435058594,
+          "right": 565.2083435058594,
+          "bottom": 495.3333435058594
+        },
+        {
+          "label": "Ocultar texto",
+          "x": 583.2083740234375,
+          "y": 455.3333435058594,
+          "right": 678.6667098999023,
+          "bottom": 495.3333435058594
+        },
+        {
+          "label": "Tela pretaB",
+          "x": 696.6666870117188,
+          "y": 455.3333435058594,
+          "right": 876.6666870117188,
+          "bottom": 495.3333435058594
+        }
+      ],
+      "size": {
+        "width": 1366,
+        "height": 768
+      },
+      "zoom": 1.5
+    },
+    {
+      "viewport": {
+        "width": 683,
+        "height": 384
+      },
+      "horizontalOverflow": false,
+      "footer": {
+        "x": 12,
+        "y": 280,
+        "right": 663.5,
+        "bottom": 384,
+        "width": 651.5,
+        "height": 104
+      },
+      "prepared": {
+        "x": 33,
+        "y": 422.8828125,
+        "right": 353,
+        "bottom": 602.8828125,
+        "width": 320,
+        "height": 180
+      },
+      "live": {
+        "x": 33,
+        "y": 816.125,
+        "right": 353,
+        "bottom": 996.125,
+        "width": 320,
+        "height": 180
+      },
+      "buttons": [
+        {
+          "label": "→",
+          "x": 62,
+          "y": 328.25,
+          "right": 104,
+          "bottom": 368.25
+        },
+        {
+          "label": "Apresentar ↗",
+          "x": 112,
+          "y": 328.25,
+          "right": 381.375,
+          "bottom": 368.25
+        },
+        {
+          "label": "Ocultar texto",
+          "x": 399.375,
+          "y": 328.25,
+          "right": 495.5,
+          "bottom": 368.25
+        },
+        {
+          "label": "Tela pretaB",
+          "x": 513.5,
+          "y": 327.5,
+          "right": 663.5,
+          "bottom": 369
+        }
+      ],
+      "size": {
+        "width": 1366,
+        "height": 768
+      },
+      "zoom": 2
+    },
+    {
+      "viewport": {
+        "width": 1874,
+        "height": 1011
+      },
+      "horizontalOverflow": false,
+      "footer": {
+        "x": 24,
+        "y": 937,
+        "right": 1850,
+        "bottom": 1011,
+        "width": 1826,
+        "height": 74
+      },
+      "prepared": {
+        "x": 78,
+        "y": 327.28125,
+        "right": 718,
+        "bottom": 687.28125,
+        "width": 640,
+        "height": 360
+      },
+      "live": {
+        "x": 1096.125,
+        "y": 305.53125,
+        "right": 1416.125,
+        "bottom": 485.53125,
+        "width": 320,
+        "height": 180
+      },
+      "buttons": [
+        {
+          "label": "→",
+          "x": 1287.875,
+          "y": 954.5,
+          "right": 1329.875,
+          "bottom": 994.5
+        },
+        {
+          "label": "Apresentar ↗",
+          "x": 1337.875,
+          "y": 954.5,
+          "right": 1537.875,
+          "bottom": 994.5
+        },
+        {
+          "label": "Ocultar texto",
+          "x": 1555.875,
+          "y": 954.5,
+          "right": 1652,
+          "bottom": 994.5
+        },
+        {
+          "label": "Tela pretaB",
+          "x": 1670,
+          "y": 954,
+          "right": 1850,
+          "bottom": 995
+        }
+      ],
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "zoom": 1
+    },
+    {
+      "viewport": {
+        "width": 1499,
+        "height": 809
+      },
+      "horizontalOverflow": false,
+      "footer": {
+        "x": 24,
+        "y": 734.7999877929688,
+        "right": 1463.2000732421875,
+        "bottom": 808.7999877929688,
+        "width": 1439.2000732421875,
+        "height": 74
+      },
+      "prepared": {
+        "x": 40.79999923706055,
+        "y": 326.70001220703125,
+        "right": 660.887523651123,
+        "bottom": 675.5000305175781,
+        "width": 620.0875244140625,
+        "height": 348.8000183105469
+      },
+      "live": {
+        "x": 879.2250366210938,
+        "y": 304.95001220703125,
+        "right": 1199.2250366210938,
+        "bottom": 484.95001220703125,
+        "width": 320,
+        "height": 180
+      },
+      "buttons": [
+        {
+          "label": "→",
+          "x": 901.4750366210938,
+          "y": 752.2000122070312,
+          "right": 943.4750366210938,
+          "bottom": 792.2000122070312
+        },
+        {
+          "label": "Apresentar ↗",
+          "x": 951.4750366210938,
+          "y": 752.2000122070312,
+          "right": 1151.4750366210938,
+          "bottom": 792.2000122070312
+        },
+        {
+          "label": "Ocultar texto",
+          "x": 1169.4749755859375,
+          "y": 752.2000122070312,
+          "right": 1265.1999740600586,
+          "bottom": 792.2000122070312
+        },
+        {
+          "label": "Tela pretaB",
+          "x": 1283.2000732421875,
+          "y": 751.7999877929688,
+          "right": 1463.2000732421875,
+          "bottom": 792.5999870300293
+        }
+      ],
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "zoom": 1.25
+    },
+    {
+      "viewport": {
+        "width": 1249,
+        "height": 674
+      },
+      "horizontalOverflow": false,
+      "footer": {
+        "x": 24,
+        "y": 600,
+        "right": 1215.3333740234375,
+        "bottom": 674,
+        "width": 1191.3333740234375,
+        "height": 74
+      },
+      "prepared": {
+        "x": 40.66666793823242,
+        "y": 326.28125,
+        "right": 421.1041679382324,
+        "bottom": 540.28125,
+        "width": 380.4375,
+        "height": 214
+      },
+      "live": {
+        "x": 736.7083740234375,
+        "y": 304.53125,
+        "right": 1056.7083740234375,
+        "bottom": 484.53125,
+        "width": 320,
+        "height": 180
+      },
+      "buttons": [
+        {
+          "label": "→",
+          "x": 653.875,
+          "y": 617.3333740234375,
+          "right": 695.875,
+          "bottom": 657.3333740234375
+        },
+        {
+          "label": "Apresentar ↗",
+          "x": 703.875,
+          "y": 617.3333740234375,
+          "right": 903.875,
+          "bottom": 657.3333740234375
+        },
+        {
+          "label": "Ocultar texto",
+          "x": 921.875,
+          "y": 617.3333740234375,
+          "right": 1017.3333358764648,
+          "bottom": 657.3333740234375
+        },
+        {
+          "label": "Tela pretaB",
+          "x": 1035.3333740234375,
+          "y": 617.3333740234375,
+          "right": 1215.3333740234375,
+          "bottom": 657.3333740234375
+        }
+      ],
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "zoom": 1.5
+    },
+    {
+      "viewport": {
+        "width": 937,
+        "height": 505
+      },
+      "horizontalOverflow": false,
+      "footer": {
+        "x": 24,
+        "y": 431.5,
+        "right": 905.5,
+        "bottom": 505.5,
+        "width": 881.5,
+        "height": 74
+      },
+      "prepared": {
+        "x": 45,
+        "y": 403.0859375,
+        "right": 365,
+        "bottom": 583.0859375,
+        "width": 320,
+        "height": 180
+      },
+      "live": {
+        "x": 559.046875,
+        "y": 377.3359375,
+        "right": 879.046875,
+        "bottom": 557.3359375,
+        "width": 320,
+        "height": 180
+      },
+      "buttons": [
+        {
+          "label": "→",
+          "x": 343.375,
+          "y": 449,
+          "right": 385.375,
+          "bottom": 489
+        },
+        {
+          "label": "Apresentar ↗",
+          "x": 393.375,
+          "y": 449,
+          "right": 593.375,
+          "bottom": 489
+        },
+        {
+          "label": "Ocultar texto",
+          "x": 611.375,
+          "y": 449,
+          "right": 707.5,
+          "bottom": 489
+        },
+        {
+          "label": "Tela pretaB",
+          "x": 725.5,
+          "y": 448.25,
+          "right": 905.5,
+          "bottom": 489.75
+        }
+      ],
+      "size": {
+        "width": 1920,
+        "height": 1080
+      },
+      "zoom": 2
+    }
+  ],
+  "keyboard": [
+    "Ctrl+F focuses search",
+    "Tab + Enter starts rehearsal and presents",
+    "B, O and arrows control presentation outside inputs",
+    "Typing B/O/arrows in editor preserves output",
+    "Dialog opens by keyboard; Esc preserves presentation",
+    "Esc ends rehearsal"
+  ],
+  "contrast": [
+    {
+      "name": "body",
+      "ratio": 14.230513064166056,
+      "min": 4.5
+    },
+    {
+      "name": "secondary",
+      "ratio": 9.249089248641559,
+      "min": 4.5
+    },
+    {
+      "name": "primary button",
+      "ratio": 5.996566040081668,
+      "min": 4.5
+    },
+    {
+      "name": "focus",
+      "ratio": 7.933487263684739,
+      "min": 3
+    }
+  ],
+  "failures": [
+    "Preview behind footer at 1366x768, zoom 1.5",
+    "Preview behind footer at 1366x768, zoom 2",
+    "Preview behind footer at 1920x1080, zoom 2"
+  ]
+}

@@ -1,21 +1,25 @@
 {
   "name": "zamar-sync",
-  "version": "0.7.0",
+  "version": "1.0.0",
   "private": true,
-  "description": "Apresenta\u00e7\u00e3o offline de letras, B\u00edblia e cifras",
+  "description": "Apresentação offline de letras, Bíblia e cifras",
   "author": "Zamar Sync",
   "license": "UNLICENSED",
   "main": "dist/main/main.js",
   "scripts": {
-    "build": "node scripts/licenses.cjs && tsc -p tsconfig.main.json && vite build",
+    "build": "node scripts/licenses.cjs && tsc -p tsconfig.main.json && vite build && node scripts/release-manifest.cjs",
     "check": "tsc --noEmit && tsc -p tsconfig.main.json --noEmit",
     "start": "npm run build && electron .",
     "test": "npm run build && node --test tests/*.test.cjs",
     "pack:linux": "npm run build && electron-builder --linux AppImage tar.gz --x64",
     "pack:win": "npm run build && electron-builder --win zip --x64",
     "licenses": "node scripts/licenses.cjs",
+    "test:performance": "node tests/quality.cjs",
+    "test:qualification": "node tests/electron-smoke.cjs --qualification",
     "test:electron": "node tests/electron-smoke.cjs",
-    "pack:linux:dir": "npm run build && electron-builder --linux dir --x64"
+    "pack:linux:dir": "npm run build && electron-builder --linux dir --x64",
+    "test:upgrade": "node tests/release-upgrade.cjs",
+    "verify:release": "node scripts/verify-release.cjs"
   },
   "dependencies": {
     "react": "19.3.1",
@@ -55,7 +59,23 @@
     },
     "artifactName": "zamar-sync-${version}-${os}-${arch}.${ext}",
     "extraFiles": [
-      "THIRD_PARTY_NOTICES.txt"
+      "THIRD_PARTY_NOTICES.txt",
+      {
+        "from": "docs/guia-rapido.md",
+        "to": "GUIA-RAPIDO.md"
+      },
+      {
+        "from": "docs/atualizacao-e-recuperacao.md",
+        "to": "ATUALIZACAO.md"
+      },
+      {
+        "from": ".release-metadata/COMPONENTS.json",
+        "to": "COMPONENTS.json"
+      },
+      {
+        "from": ".release-metadata/BUILD-MANIFEST.json",
+        "to": "BUILD-MANIFEST.json"
+      }
     ],
     "asarUnpack": [
       "dist/main/bible-worker.js",

@@ -1,0 +1,21 @@
+{
+  "appVersion": "1.0.0",
+  "platforms": [
+    {
+      "platform": "linux",
+      "version": "1.0.0",
+      "verifiedDistFiles": 76,
+      "extrasVerified": 7
+    },
+    {
+      "platform": "win",
+      "version": "1.0.0",
+      "verifiedDistFiles": 76,
+      "extrasVerified": 7,
+      "authenticode": {
+        "fileOffset": 0,
+        "size": 0
+      }
+    }
+  ]
+}

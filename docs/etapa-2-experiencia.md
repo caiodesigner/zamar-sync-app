@@ -1,5 +1,8 @@
 # Etapa 2 — Experiência e protótipo navegável
 
+> Estado atual em 18/10/2026: pendências físicas/humanas encerradas conforme [aceite informado pelo usuário](homologacao/aceite-usuario.md). O texto abaixo preserva o roteiro e as evidências históricas; resultados finais na [etapa 10](etapa-10-entrega.md). Não houve nova execução física ou humana pelo agente.
+
+
 > Artefatos deste relatório são históricos. Os pacotes disponíveis em release foram atualizados para 0.3.1; versões anteriores foram removidas na limpeza solicitada.
 
 Versão 0.2.0. A solicitação para avançar autoriza o trabalho de experiência enquanto a homologação Windows/Linux da etapa 1 permanece pendente. Não declarar essa homologação concluída por causa da interface nova.

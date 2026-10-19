@@ -65,3 +65,5 @@ Pacotes gerados para Windows ZIP e Linux AppImage/tar.gz. Cada um acompanha SHA-
 Windows foi gerado e inspecionado, sem execução neste ambiente. Datashow físico e homologação dos sistemas permanecem nas tarefas anteriores e na etapa 9.
 
 Testes gráficos completos aprovados nos três formatos Linux finais: pasta, AppImage por extração automática sem FUSE e tar.gz. Incluem o fluxo de cifras e regressões das etapas anteriores, com dados temporários isolados. Limpeza concluída: seis arquivos 0.6.0 removidos; pacotes 0.7.0, seus hashes e `release/data` preservados.
+
+Nota de histórico: os pacotes 0.7.0 foram substituídos em release pela [etapa 8](etapa-8-importacao-e-recuperacao.md). Os hashes acima registram a entrega anterior.

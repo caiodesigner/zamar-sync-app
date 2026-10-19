@@ -1,0 +1,13 @@
+const fs=require('node:fs'),path=require('node:path'),assert=require('node:assert/strict'),crypto=require('node:crypto'),asar=require('@electron/asar');
+const manifest=JSON.parse(fs.readFileSync('.release-metadata/BUILD-MANIFEST.json','utf8'));const sha=buffer=>crypto.createHash('sha256').update(buffer).digest('hex');const result={appVersion:manifest.appVersion,platforms:[]};
+for(const platform of ['linux','win']){
+ const root=path.resolve(`release/${platform}-unpacked`),resources=path.join(root,'resources'),archive=path.join(resources,'app.asar');assert(!fs.existsSync(path.join(root,'data')),'User data must not be distributed');const pkg=JSON.parse(asar.extractFile(archive,'package.json'));assert.equal(pkg.version,manifest.appVersion);
+ let count=0;for(const file of manifest.files.filter(f=>f.path.startsWith('dist/'))){const unpacked=path.join(resources,'app.asar.unpacked',file.path);const bytes=fs.existsSync(unpacked)?fs.readFileSync(unpacked):asar.extractFile(archive,file.path);assert.equal(sha(bytes),file.sha256,`${platform}: ${file.path}`);assert.equal(bytes.length,file.bytes);count++;}
+ const extras={'GUIA-RAPIDO.md':'docs/guia-rapido.md','ATUALIZACAO.md':'docs/atualizacao-e-recuperacao.md','THIRD_PARTY_NOTICES.txt':'THIRD_PARTY_NOTICES.txt','COMPONENTS.json':'.release-metadata/COMPONENTS.json'};
+ for(const [destination,source] of Object.entries(extras)){const entry=manifest.files.find(f=>f.path===source);assert(entry);assert.equal(sha(fs.readFileSync(path.join(root,destination))),entry.sha256,`${platform}: ${destination}`);}
+ assert.deepEqual(JSON.parse(fs.readFileSync(path.join(root,'BUILD-MANIFEST.json'),'utf8')),manifest);for(const name of ['LICENSE.electron.txt','LICENSES.chromium.html'])assert(fs.statSync(path.join(root,name)).size>0);
+ const record={platform,version:pkg.version,verifiedDistFiles:count,extrasVerified:Object.keys(extras).length+3};
+ if(platform==='win'){const pe=fs.readFileSync(path.join(root,'Zamar Sync.exe'));assert.equal(pe.toString('ascii',0,2),'MZ');const offset=pe.readUInt32LE(0x3c);assert.equal(pe.toString('ascii',offset,offset+4),'PE\0\0');assert.equal(pe.readUInt16LE(offset+4),0x8664);const optional=offset+24;assert.equal(pe.readUInt16LE(optional),0x20b);const directory=optional+112+4*8;record.authenticode={fileOffset:pe.readUInt32LE(directory),size:pe.readUInt32LE(directory+4)};assert.deepEqual(record.authenticode,{fileOffset:0,size:0},'Unsigned release decision must match the executable');}
+ result.platforms.push(record);
+}
+fs.writeFileSync(process.env.ZAMAR_RELEASE_REPORT||path.join(require('node:os').tmpdir(),'zamar-release-verification.json'),JSON.stringify(result,null,2));console.log(JSON.stringify(result,null,2));

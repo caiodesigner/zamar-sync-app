@@ -1,6 +1,6 @@
 # Zamar Sync
 
-Versão 0.7.0 de aplicativo desktop offline para projeção de letras, Bíblia e cifras. A etapa 6 adiciona importação restrita de Bíblia SQL com prévia, consulta por referência, pesquisa, navegação e projeção de versículos com versão e atribuição. Músicas, textos, programações e temas continuam disponíveis. A etapa 7 acrescenta cifras estruturadas, transposição e apresentação alinhada, com cópias independentes na programação.
+Versão 1.0.0 de aplicativo desktop offline para projeção de letras, Bíblia e cifras. A etapa 6 adiciona importação restrita de Bíblia SQL com prévia, consulta por referência, pesquisa, navegação e projeção de versículos com versão e atribuição. Músicas, textos, programações e temas continuam disponíveis. A etapa 7 acrescenta cifras estruturadas, transposição e apresentação alinhada, com cópias independentes na programação. A etapa 8 adiciona importação com prévia, tratamento de duplicatas, exportação completa e salvamento automático seguro.
 
 ## Desenvolvimento
 
@@ -14,22 +14,22 @@ Requer Node.js 24 e npm no computador de desenvolvimento. O operador do pacote f
 
 O processo de empacotamento pode precisar de rede para baixar o Electron da plataforma alvo. Isso não cria uma dependência de internet para o aplicativo empacotado.
 
-## Uso do protótipo Windows
+## Uso no Windows
 
 Extrair o ZIP de `release` por completo para uma pasta gravável e abrir `Zamar Sync.exe`. Não executar dentro do ZIP. A pasta `data` será criada junto do executável; mover a pasta completa preserva os dados. Fechar o app antes de copiar dados ou remover um pendrive.
 
-Preparar um texto, escolher Ensaio neste monitor ou um datashow em modo estendido e clicar Iniciar apresentação. Usar Apresentar para enviar o bloco escolhido. “Salvar texto” confirma gravação local; fechar e reabrir recupera o texto salvo. O protótipo ainda não tem salvamento automático. Editar o rascunho não altera a projeção. Esc na projeção fecha a saída. Uma tela usa ensaio local, sem abrir saída em tela cheia sobre os controles.
+Preparar um texto, escolher Ensaio neste monitor ou um datashow em modo estendido e clicar Iniciar apresentação. Usar Apresentar para enviar o bloco escolhido. “Salvar texto” confirma gravação local; fechar e reabrir recupera o texto salvo. Edições válidas são salvas automaticamente após uma pausa de 1,2 segundo, com indicador de gravação e recuperação da última edição confirmada. Editar o rascunho não altera a projeção. Esc na projeção fecha a saída. Uma tela usa ensaio local, sem abrir saída em tela cheia sobre os controles.
 
 Na aba Bíblia, use Cadastrar Bíblia para selecionar um `.sql` UTF-8 já baixado, informar metadados, conferir o mapeamento e aceitar a cobertura antes de confirmar. Os dois perfis suportados são tabela única e tabela de livros relacionada aos versículos. Dumps incompatíveis são recusados sem execução. Não há Bíblia pré-carregada; ARA pode ser cadastrada quando o arquivo for compatível, sem exigência de documento de licença no fluxo local.
 
 ## Estado e limites
 
-Windows e Linux são plataformas do MVP. O ZIP Windows não tem assinatura de código. A homologação em máquinas limpas de ambos os sistemas e com monitores físicos ainda está pendente. Matriz Linux inicial: Ubuntu 24.04 LTS e Mint 22 x64, X11 ou XWayland; Wayland nativo não é alvo desta versão.
+Windows e Linux são plataformas do MVP. O ZIP Windows não tem assinatura de código. As validações físicas de sistemas/monitores e o ensaio com cinco voluntários foram encerrados conforme confirmação do usuário; veja o registro de aceite. O agente executou os testes automatizados Linux e inspecionou o pacote Windows, sem nova execução Windows nesta entrega. Matriz Linux inicial: Ubuntu 24.04 LTS e Mint 22 x64, X11 ou XWayland; Wayland nativo não é alvo desta versão.
 
 Ver [plano](docs/plano-de-desenvolvimento.md), [registro de execução](docs/registro-de-execucao.md) e [roteiro de homologação](docs/etapa-1-validacao.md).
 
 
-## Uso do protótipo Linux
+## Uso no Linux
 
 No AppImage, conceder permissão de execução pelo gerenciador de arquivos ou `chmod +x arquivo.AppImage`, e abrir. A pasta `data` fica ao lado do arquivo AppImage original; mover o aplicativo exige mover os dados juntos. Não são salvos dentro da montagem temporária.
 
@@ -42,7 +42,7 @@ Para testar os artefatos Linux: após `npm run pack:linux`, executar `ZAMAR_SMOK
 
 ## Testar a experiência atual
 
-Use os pacotes com versão 0.7.0 em `release` ou `npm start`. Não copie dados reais para o teste; use uma pasta nova ou um backup.
+Use os pacotes com versão 1.0.0 em `release` ou `npm start`. Não copie dados reais para o teste; use uma pasta nova ou um backup.
 
 Em Músicas, use Nova música, informe título e autor, edite a letra de cada seção e organize a ordem. Repetir seção selecionada reutiliza o mesmo refrão. Clique em Salvar música antes de trocar de conteúdo. A busca encontra título, autor e letra sem distinguir acentos. Arquivar música e Salvar música move o cadastro para Ver arquivadas; é possível desarquivar.
 
@@ -59,9 +59,9 @@ Na prévia, use Novo tema ou Editar tema. Escolha proporção, cores, fonte, tam
 Confira o [roteiro de voluntários da etapa 2](docs/etapa-2-experiencia.md). Para cifras, use `[C]Minha [G/B]canção`, selecione os tons e o modo de exibição e salve a música. Veja o [roteiro da etapa 7](docs/etapa-7-cifras.md). Para Bíblia, consulte [formatos e roteiro da etapa 6](docs/etapa-6-biblia-offline.md). Use referências como Jo 3:16 ou 1 Jo 2:1-3; pesquise ou navegue por livro/capítulo. Preparar passagem não altera a saída até Apresentar. O arquivo original pode ser removido após importar.
 
 
-## Backup e restauração — 0.6.0
+## Exportação, backup e restauração — 0.8.0
 
-Salve seus conteúdos, temas e programações, abra Configurações e use Criar backup para escolher um arquivo `.zamar-backup`. Para recuperar, use Restaurar backup e confirme a substituição. A aplicação cria uma cópia dos dados atuais antes da restauração e informa onde ela foi salva. A apresentação é encerrada e o conteúdo não volta automaticamente ao datashow.
+Aguarde a gravação automática ou use Salvar, abra Configurações e use Exportar biblioteca completa ou Criar backup para escolher um arquivo `.zamar-backup`. Para recuperar, use Restaurar backup e confirme a substituição. A aplicação cria uma cópia dos dados atuais antes da restauração e informa onde ela foi salva. A apresentação é encerrada e o conteúdo não volta automaticamente ao datashow.
 
 A atualização reconhece o rascunho das versões anteriores e migra o banco com cópia prévia. Feche a versão antiga antes de abrir a nova e preserve sua pasta `data`. A limpeza de releases remove somente artefatos antigos; `release/data` é preservada. Músicas, textos, temas, imagens, programações e Bíblias importadas entram no backup; registros antigos de formato desconhecido são preservados e sinalizados, sem conversão destrutiva.
 
@@ -71,7 +71,7 @@ Backups 0.6.0 usam envelope 2, necessário para os corpus bíblicos. A versão a
 
 Detalhes e limites em [dados e recuperação](docs/etapa-3-dados.md).
 
-A pasta release contém apenas os pacotes gerados 0.7.0 para distribuição e seus hashes, além das pastas de teste atuais e dos dados preservados. Para limpezas futuras após gerar e conferir os arquivos SHA-256, usar `node scripts/clean-release.cjs`.
+A pasta release contém apenas os pacotes gerados 1.0.0 para distribuição e seus hashes, além das pastas de teste atuais e dos dados preservados. Para limpezas futuras após gerar e conferir os arquivos SHA-256, usar `node scripts/clean-release.cjs`.
 
 
 ## Modo apresentador e datashow
@@ -80,4 +80,22 @@ Com uma tela, selecione Ensaio neste monitor e Iniciar apresentação. Apresenta
 
 Ver [correção do modo apresentador](docs/ajuste-modo-apresentador.md).
 
-Detalhes da entrega atual e roteiro de aceitação em [etapa 6 — Bíblia offline](docs/etapa-6-biblia-offline.md). Histórico de programação e temas em [etapa 5](docs/etapa-5-programacao-e-temas.md). Histórico de letras em [etapa 4](docs/etapa-4-letras.md).
+Detalhes da entrega final em [etapa 10](docs/etapa-10-entrega.md). Bíblia offline em [etapa 6](docs/etapa-6-biblia-offline.md). Histórico de programação e temas em [etapa 5](docs/etapa-5-programacao-e-temas.md). Histórico de letras em [etapa 4](docs/etapa-4-letras.md).
+
+## Importação e recuperação — etapa 8
+
+Use Importar texto ou cifra para abrir `.txt`, `.pro` ou `.chordpro` UTF-8, corrigir a prévia e confirmar. Duplicatas exigem ignorar, copiar ou atualizar explicitamente. Atualizar cria backup anterior. O botão Recuperar última edição prepara o último lote automático confirmado, sem iniciar projeção. Campos inválidos, conflitos e falhas de gravação preservam a última versão confirmada; confira o indicador antes de fechar. Veja [formatos, limites e roteiro da etapa 8](docs/etapa-8-importacao-e-recuperacao.md).
+
+
+## Homologação e entrega final
+
+A versão 1.0.0 melhora a busca em bibliotecas grandes e o apresentador em zoom alto. Resultados são carregados em lotes de 100; a busca consulta todas as músicas. Ctrl+F durante apresentação revela a biblioteca sem alterar a saída.
+
+`npm run test:performance` mede a compilação atual com 10 mil músicas sintéticas. `npm run test:qualification` verifica teclado/zoom do pacote em pasta, com sandbox habilitado e contexto offline. Execute `npm run build` antes de medir alterações de código. Veja o [relatório da etapa 9](docs/etapa-9-homologacao.md) e o [aceite do usuário](docs/homologacao/aceite-usuario.md). A confirmação inclui duas horas com dois monitores e rede desligada, sem falhas bloqueadoras; tempos individuais dos voluntários não foram fornecidos.
+
+
+## Entrega 1.0.0
+
+[Guia rápido](docs/guia-rapido.md) e [atualização/retorno](docs/atualizacao-e-recuperacao.md) acompanham os pacotes como GUIA-RAPIDO.md e ATUALIZACAO.md. COMPONENTS.json e BUILD-MANIFEST.json identificam dependências e hashes da compilação. Windows permanece sem assinatura digital; a avaliação e os alertas possíveis estão no guia de atualização.
+
+Para gerar e verificar uma entrega: `npm run check`, `npm test`, gerar os pacotes e `npm run verify:release`. Os arquivos SHA-256 identificam os três pacotes. O teste `npm run test:upgrade` usa uma cópia anterior sem dados reais indicada por ZAMAR_PREVIOUS_APP. O plano registra 44/44 tarefas encerradas, distinguindo evidência automatizada e aceite externo.

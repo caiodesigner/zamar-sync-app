@@ -22,7 +22,6 @@ export function songRecord(value: unknown, existing?: LibraryRecord): LibraryRec
 export function readSong(record: LibraryRecord): Song {
   return validateSong({ ...record.data, id:record.id, title:record.title });
 }
-export function searchSong(song: Song, query: string): boolean {
-  const normalize = (text: string) => text.normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('pt-BR');
-  return normalize([song.title,song.author,...song.sections.map(s => s.text)].join(' ')).includes(normalize(query.trim()));
-}
+export const normalizeSongSearch = (text:string) => text.normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase('pt-BR');
+export const songSearchText = (song:Song) => normalizeSongSearch([song.title,song.author,...song.sections.map(s=>s.text)].join(' '));
+export function searchSong(song: Song, query: string): boolean {return songSearchText(song).includes(normalizeSongSearch(query.trim()));}

@@ -106,4 +106,4 @@ Geração: `ELECTRON_BUILDER_COMPRESSION_LEVEL=5 npx electron-builder --linux Ap
 
 Limpeza concluída: removidos seis arquivos 0.4.0 (três pacotes e três hashes). Permanecem apenas os pacotes 0.5.0, hashes, pastas atuais e dados locais preservados. Captura real em [modo apresentador](etapa-5-preview.png).
 
-**Histórico de distribuição:** pacotes 0.5.0 substituídos por 0.6.0. A entrega atual é a [etapa 7](etapa-7-cifras.md).
+**Histórico de distribuição:** pacotes 0.5.0 substituídos por 0.6.0. A entrega atual é a [versão 1.0.0, etapa 10](etapa-10-entrega.md).

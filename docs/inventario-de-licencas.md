@@ -31,3 +31,13 @@ A tarefa 0.3 está concluída como inventário de conteúdos e componentes distr
 O inventário de software instalado está em [dependencias-e-licencas.md](dependencias-e-licencas.md), gerado a partir do lockfile. Os avisos de React, React DOM e Scheduler acompanham o pacote; Electron e Chromium incluem seus avisos. A interface usa fontes do sistema neste protótipo, sem redistribuir Inter.
 
 A [minuta anterior](solicitacao-autorizacao-ara.md) é mantida apenas como histórico, sem envio e sem constituir próximo passo obrigatório. Ver [contrato de importação SQL](importacao-biblia-sql.md).
+
+
+## Inventário efetivo da entrega 1.0.0
+
+- React 19.3.1, React DOM 19.3.1 e Scheduler 0.28.0: avisos MIT preservados em THIRD_PARTY_NOTICES.txt.
+- Electron 44.9.0 e componentes do runtime: LICENSE.electron.txt e LICENSES.chromium.html acompanham os pacotes. Node/SQLite são os incluídos no runtime, sem instalação separada pelo operador.
+- COMPONENTS.json registra 351 componentes fixados pelo lockfile, distinguindo aplicação, runtime Electron e ferramentas de compilação. O inventário completo do desenvolvimento continua em dependencias-e-licencas.md.
+- Não foram incluídas a fonte Inter, uma Bíblia ARA ou imagens/letras de terceiros. Fontes de apresentação usam as famílias disponíveis no sistema com fallback; símbolos e estilos do app são código da interface. O ícone de empacotamento padrão do Electron foi mantido.
+- O metadado do código próprio continua UNLICENSED, conforme o projeto. Nenhuma licença aberta foi atribuída automaticamente por esta entrega.
+- BUILD-MANIFEST.json vincula os arquivos compilados, guias e inventário a seus hashes e à versão 1.0.0. Arquivos de usuários não integram os pacotes distribuídos.

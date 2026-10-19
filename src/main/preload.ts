@@ -2,6 +2,11 @@ import { contextBridge, ipcRenderer } from 'electron';
 import type { Bridge, Snapshot } from '../shared/contracts';
 const invoke = (channel: string, payload: unknown = null) => ipcRenderer.invoke(channel, { version: 1, payload });
 const bridge: Bridge = {
+  selectImport:()=>invoke('import-select'),
+  previewImport:draft=>invoke('import-preview',draft),
+  confirmImport:(draft,choice,target)=>invoke('import-confirm',{draft,choice,target}),
+  recovery:()=>invoke('recovery'),
+  autosave:(epoch,entries)=>invoke('autosave',{epoch,entries}),
   initial: () => invoke('initial'),
   save: text => invoke('save', text),
   present: text => invoke('present', text),

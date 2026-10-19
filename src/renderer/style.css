@@ -27,3 +27,30 @@
 fieldset{border:0;padding:0;margin:0;min-width:0}progress{max-width:100%;margin:12px 8px 12px 0}
 
 .music-settings{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}.music-settings legend{margin-bottom:12px;font-weight:600}.chord-token{color:inherit;font-weight:600}.chord-page{white-space:normal}.chord-warnings{margin:12px 0;color:#f2cc8f}.chord-warnings p{font-size:12px}
+
+.autosave-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:12px 0;font-size:12px;color:#a9bdd5}.autosave-bar>span{flex:1;min-width:200px}.autosave-bar button{padding:8px;font-size:12px}.operator.presenting .autosave-bar{display:none}.import-preview{height:220px!important;margin:12px 0}.recovery-entry{display:block;width:100%;margin:10px 0;text-align:left}
+/* Compact presentation preserves both previews and live controls at high zoom. */
+@media(max-height:700px){
+ .operator.presenting .app-header{min-height:52px;padding:6px 0;gap:12px}
+ .operator.presenting .header-caption,.operator.presenting .badge{display:none}
+ .operator.presenting .output-bar{padding:8px 0;gap:6px}
+ .operator.presenting .output-bar label{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+ .operator.presenting .output-bar select{max-width:220px}
+ .operator.presenting .output-bar button{min-height:34px;padding:7px 9px;font-size:11px}
+ .operator.presenting .output-label{display:none}
+ .operator.presenting .presentation-notice{font-size:11px;line-height:1.4;padding:6px 10px;margin-bottom:8px}
+ .operator.presenting .presentation-notice>span{display:none}
+ .operator.presenting .panel{padding:12px}
+ .operator.presenting .section-heading{margin-bottom:10px}
+ .operator.presenting .preview-panel h2,.operator.presenting .live-panel h2{font-size:15px}
+ .operator.presenting .prepared{height:clamp(90px,calc(100vh - 360px),220px)}
+ .operator.presenting .live-preview{height:110px;margin-bottom:0}
+ .operator.presenting .workspace{gap:12px}
+ .operator.presenting .hint{font-size:11px}
+}
+@media(max-height:700px) and (min-width:600px){
+ .operator.presenting .workspace{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+ .operator.presenting .right-column{display:grid;grid-template-columns:1fr}
+ .operator.presenting .live-panel{order:initial}
+}
+@media(max-height:450px){.operator.presenting .app-header{display:none}.operator.presenting .output-bar select{max-width:200px}}

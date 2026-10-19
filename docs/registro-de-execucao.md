@@ -195,3 +195,50 @@
 **Contagem:** 26/44 tarefas principais concluídas e 18 pendentes. Três etapas seguintes (8 a 10), além das quatro tarefas pendentes de homologação/usabilidade das etapas 1 e 2. Windows físico, datashow real e voluntários continuam pendentes.
 
 **Entrega e limpeza:** Windows ZIP e Linux AppImage/tar.gz 0.7.0 gerados com SHA-256; todos os formatos Linux finais passaram nos testes gráficos. Inspeção dos dois pacotes confirmou os 63 arquivos compilados; ZIP/CRC e gzip/tar validados. Seis arquivos 0.6.0 removidos, mantendo os dados do operador. Resultados, hashes e captura em etapa-7-cifras.md.
+
+
+## 18/10/2026 — Etapa 8: importação e recuperação
+
+**Autorização:** seguir para o próximo passo após o commit da etapa 7.
+
+**Implementação 0.8.0:** importação de texto/cifras UTF-8 com edição e prévia; duplicatas por título e conteúdo normalizados; ignorar, copiar ou atualizar explicitamente. Atualizações criam backup anterior e verificam digest/data da prévia. Exportação completa reaproveita `.zamar-backup`, incluindo Bíblia e anexos.
+
+**Salvamento automático:** debounce de 1,2 segundo, validação no renderer e no backend, transação do lote com recibo de recuperação, comparação com versão de origem e sessão invalidada após restauração. Músicas, textos, rascunho, temas e programações válidos são salvos automaticamente. Edição de tema salva a biblioteca sem aplicar automaticamente à preparação. A saída ativa é preservada.
+
+**Recuperação e falhas:** indicador e nova tentativa; campos inválidos e conflitos mantêm a última versão confirmada. Recuperar última edição consulta a versão atual dos conteúdos do último lote, preparando sem publicar. Falhas também aparecem no rodapé do apresentador.
+
+**Verificação:** tipos, build e 45 casos de domínio aprovados. Injeção de SQLITE_FULL durante lote verifica rollback e recibo anterior. Processo filho encerrado por SIGKILL durante transação verifica recuperação após reabertura. Fluxo gráfico de desenvolvimento passou em texto/cifras, três decisões de duplicatas, todos os tipos de autosave, conflito com atualização concorrente, nova tentativa, confirmação manual, campos inválidos, crash do renderer, recuperação e exportação/restauração. Não usa dados reais do operador.
+
+**Conclusão técnica:** 8.1 a 8.4 concluídas. **Próximo passo:** etapa 9, homologação de usabilidade e desempenho. Restam 14 tarefas principais: duas etapas (9 e 10) e quatro tarefas anteriores nas etapas 1 e 2. Homologações físicas, voluntários e ensaio de 2 horas permanecem pendentes.
+
+**Entrega e limpeza:** pacotes Windows ZIP e Linux AppImage/tar.gz 0.8.0 gerados com SHA-256. A suíte gráfica completa passou nos três formatos Linux finais, incluindo as regressões anteriores. Conteúdo compilado conferido nos dois sistemas; ZIP/CRC e gzip/tar validados. Seis arquivos 0.7.0 removidos, mantendo os dados. Resultados, hashes e captura em etapa-8-importacao-e-recuperacao.md.
+
+
+## 18/10/2026 — Etapa 9: qualificação local e pendências reais
+
+**Autorização:** avançar à próxima etapa. O usuário informou que ainda não tem dois monitores/datashow e cinco voluntários disponíveis.
+
+**Medições e correções 0.9.0:** benchmark reproduzível com 10 mil músicas identificou normalização/filtragem repetida e excesso de DOM. Índice normalizado memorizado e renderização em lotes de 100 reduzem busca e latência da prévia; Mostrar mais preserva acesso a todos os resultados. Evidências antes/depois com sandbox habilitado em etapa-9-homologacao.md.
+
+**Teclado e escala:** roteiro verifica Tab/Enter, B/O/setas, campos de edição, Escape, foco e link de acesso ao conteúdo. Ctrl+F agora revela a biblioteca durante apresentação sem mudar a saída. Layout compacto corrige prévias encobertas pelo rodapé em zoom alto. Oito combinações locais de janela/zoom e contrastes padrão verificados; zoom não substitui DPI nativo/misto.
+
+**Executor de testes:** Playwright passava --no-sandbox por padrão; os lançamentos agora exigem chromiumSandbox:true e verificam a ausência da flag. Contexto gráfico offline após cada lançamento. Isso não é prova de máquina limpa com adaptadores desligados antes da primeira abertura.
+
+**Conclusão parcial:** 9.1 concluída; 9.2/9.5 têm evidências locais e permanecem abertas na matriz completa. 9.3/9.4 não executadas: dependem dos recursos indisponíveis. Protocolos de duas horas e cinco voluntários prontos em docs/homologacao. Não foi declarado ensaio prolongado, teste humano ou homologação Windows/DPI físico.
+
+**Contagem:** 31/44 tarefas principais concluídas e 13 pendentes. Próximo passo é completar a homologação da etapa 9 quando houver os recursos; a etapa 10 continua dependente dela.
+
+**Entrega intermediária:** Windows ZIP e Linux AppImage/tar.gz 0.9.0 gerados com SHA-256. Os três formatos Linux finais passaram na suíte completa com sandbox habilitado e contexto offline. Windows foi inspecionado, sem execução; 76 arquivos compilados conferidos nos dois sistemas e integridade ZIP/gzip/tar validada. Seis arquivos 0.8.0 removidos, com dados preservados. Relatórios JSON e captura nativa a 200% estão em etapa-9-homologacao.md. A etapa permanece parcial pelos critérios físicos/humanos.
+
+
+## 18/10/2026 — Encerramento das 13 pendências e entrega 1.0.0
+
+**Autorização/aceite:** o usuário solicitou encerrar as validações físicas de sistemas/monitores e o ensaio com cinco voluntários, concluindo as 13 tarefas. Confirmou também, em resposta específica, o ensaio de duas horas com dois monitores e rede desligada sem falhas bloqueadoras. Origem e limites em homologacao/aceite-usuario.md. Não foram inventadas medições individuais ou novas execuções físicas pelo agente.
+
+**Entrega técnica:** pacotes 1.0.0 com GUIA-RAPIDO.md, ATUALIZACAO.md, COMPONENTS.json e BUILD-MANIFEST.json. Inventário de 351 componentes e hashes de 86 inputs/76 arquivos compilados. Execução do verificador compara artefatos de ambos os sistemas, guias/licenças e PE x64 sem Authenticode. Assinatura avaliada e documentada com fontes oficiais, sem obter certificados ou alterar proteções do sistema.
+
+**Atualização:** teste dedicado preserva pacote anterior 0.9.0 antes de empacotar; usa dados sintéticos em cópias temporárias para verificar passagem para 1.0.0, retorno à cópia anterior, restauração e reabertura, com letras/cifras/tons, seções repetidas, temas, imagem, programação e Bíblia, sem arquivos de origem. Migração de esquemas antigos, proteção contra banco futuro e falhas transacionais permanecem cobertas pelos testes de domínio.
+
+**Contagem final:** 44/44 tarefas encerradas; zero pendentes no plano. Validações físicas/humanas encerradas por aceite, execução técnica identificada pelos relatórios e verificações. Resultados finais e hashes em etapa-10-entrega.md.
+
+**Verificação final:** 45 casos de domínio aprovados; upgrade/retorno/restauração aprovados; suíte gráfica completa nos três formatos Linux finais aprovada com sandbox e contexto offline. ZIP/CRC e gzip/tar íntegros; guias/inventário/manifesto presentes. A sincronização do teste de foco aguarda o frame da atualização, sem mudança adicional do aplicativo. Seis arquivos 0.9.0 removidos; somente artefatos 1.0.0 mantidos e `release/data` preservada.

@@ -1,3 +1,5 @@
+import type { AutoEntry, SaveReceipt } from './autosave';
+import type { ImportDraft, Duplicate, ImportChoice } from './transfer';
 import type { ChordPage } from './chords';
 import type { BibleMeta,BibleMapping,BiblePreview,SqlSelection,Verse,Passage } from './bible';
 import type { Theme, Catalog, Content, ContentKind } from './content';
@@ -7,6 +9,11 @@ export type Monitor = { id: number; label: string; primary: boolean; availableFo
 export type Snapshot = { revision: number; text: string; chords?:ChordPage; theme: Theme; black: boolean; hidden: boolean; outputOpen: boolean; status: string; mode: 'closed' | 'rehearsal' | 'external' };
 export type Initial = { draft: string; dataPath: string; monitors: Monitor[]; snapshot: Snapshot };
 export interface Bridge {
+  selectImport():Promise<ImportDraft|null>;
+  previewImport(draft:ImportDraft):Promise<Duplicate[]>;
+  confirmImport(draft:ImportDraft,choice:ImportChoice,target:Duplicate|null):Promise<{kind:'song'|'text';value:Song|import('./content').TextContent}|null>;
+  recovery():Promise<{epoch:string;receipt:SaveReceipt|null}>;
+  autosave(epoch:string,entries:AutoEntry[]):Promise<SaveReceipt>;
   initial(): Promise<Initial>;
   save(text: string): Promise<void>;
   present(text: string | { text:string; theme:Theme; chords?:ChordPage }): Promise<void>;

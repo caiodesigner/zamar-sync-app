@@ -1,0 +1,43 @@
+const {test}=require('node:test');const assert=require('node:assert/strict');const fs=require('node:fs');const {join,resolve}=require('node:path');const {tmpdir}=require('node:os');const {spawnSync}=require('node:child_process');
+const {Store}=require('../dist/main/storage');const {LibraryTransfer}=require('../dist/main/library-transfer');const {fileDraft}=require('../dist/shared/transfer');const {songRecord,readSong}=require('../dist/shared/songs');const {contentRecord,readContent,DEFAULT_THEME}=require('../dist/shared/content');
+const setup=()=>{const root=fs.mkdtempSync(join(tmpdir(),'zamar-importação-'));const store=new Store(join(root,'data'));return {root,store,service:new LibraryTransfer(store)};};
+test('UTF-8 text and chord import preserve source, reject invalid/oversized/unsupported input',()=>{
+ const {root,store,service}=setup();try{const path=join(root,'Canção.pro');fs.writeFileSync(path,'\ufeff[C]Coração\n\n[G/B]Canção');const d=service.select(path);assert.equal(d.kind,'song');assert.equal(d.text,'[C]Coração\n\n[G/B]Canção');assert.equal(store.list('song').length,0);d.title='Título corrigido';const imported=service.confirm(d,'new',null);assert.equal(imported.value.title,d.title);assert.equal(imported.value.sections[0].text,d.text);assert.ok(fs.existsSync(path));
+ fs.writeFileSync(path,Buffer.from([255,254]));assert.throws(()=>service.select(path),/UTF-8/);fs.writeFileSync(path,Buffer.alloc(1024*1024+1));assert.throws(()=>service.select(path),/1 MiB/);assert.throws(()=>service.select(join(root,'x.sql')),/Escolha/);assert.throws(()=>service.confirm({...d,text:''},'new',null),/vazio/);
+ }finally{store.close();fs.rmSync(root,{recursive:true,force:true});}
+});
+test('duplicates require explicit ignore/copy/update, stale preview cannot replace data',()=>{
+ const {root,store,service}=setup();try{const d=fileDraft('Canção.pro','[C]Minha canção');const first=service.confirm(d,'new',null).value;assert.equal(service.preview({...d,title:'CANCAO'})[0].reason,'title');assert.equal(service.preview({...d,title:'Outro título',text:'[D]Minha canção'})[0].reason,'content');assert.throws(()=>service.confirm(d,'new',null),/duplicatas/);assert.equal(service.confirm(d,'ignore',null),null);assert.equal(store.list('song').length,1);
+ const copy=service.confirm(d,'copy',null).value;assert.notEqual(copy.id,first.id);assert.match(copy.title,/cópia/);const target=service.preview(d).find(x=>x.id===first.id);service.confirm({...d,text:'[F]Versão atualizada'},'update',target);assert.equal(readSong(store.list('song').find(r=>r.id===first.id)).sections[0].text,'[F]Versão atualizada');assert.equal(fs.readdirSync(join(store.directory,'backups')).filter(n=>n.startsWith('import-')).length,1);assert.throws(()=>service.confirm(d,'update',target),/mudou/);
+ }finally{store.close();fs.rmSync(root,{recursive:true,force:true});}
+});
+test('automatic saving validates batches, preserves source keys, detects conflicts and stale restore epochs',()=>{
+ const {root,store,service}=setup();try{const epoch=service.recovery().epoch;const song=service.confirm(fileDraft('Cifras.pro','[C]Olá'),'new',null).value;const changed={...song,title:'Nova canção'};service.autosave(epoch,[{kind:'song',value:changed,base:JSON.stringify(song)}]);assert.equal(readSong(store.list('song')[0]).title,changed.title);assert.equal(service.recovery().receipt.entries[0].value.title,changed.title);
+ assert.throws(()=>service.autosave(epoch,[{kind:'song',value:{...changed,title:''},base:JSON.stringify(changed)}]),/título/);assert.equal(readSong(store.list('song')[0]).title,changed.title);assert.throws(()=>service.autosave(epoch,[{kind:'song',value:song,base:JSON.stringify(song)}]),/Conflito/);
+ service.reset();assert.throws(()=>service.autosave(epoch,[{kind:'draft',value:'Stale',base:JSON.stringify(store.read())}]),/mudaram/);
+ }finally{store.close();fs.rmSync(root,{recursive:true,force:true});}
+});
+test('simulated SQLITE_FULL rolls back a partial autosave batch and keeps the last confirmed receipt',()=>{
+ const {root,store,service}=setup();try{const epoch=service.recovery().epoch;service.autosave(epoch,[{kind:'draft',value:'Confirmado',base:JSON.stringify(store.read())}]);const receipt=store.getSetting('last-autosave');const original=store.put.bind(store);store.put=()=>{const e=new Error('SQLITE_FULL: simulated disk full');e.code='SQLITE_FULL';throw e;};
+ assert.throws(()=>service.autosave(epoch,[{kind:'draft',value:'Não confirmado',base:JSON.stringify('Confirmado')},{kind:'text',value:{id:'text',title:'Teste',text:'Novo'},base:null}]),/SQLITE_FULL/);store.put=original;assert.equal(store.read(),'Confirmado');assert.equal(store.getSetting('last-autosave'),receipt);assert.equal(store.list('text').length,0);
+ }finally{store.close();fs.rmSync(root,{recursive:true,force:true});}
+});
+test('unexpected process termination recovers committed autosave and rolls back an interrupted transaction',()=>{
+ const root=fs.mkdtempSync(join(tmpdir(),'zamar-crash-'));try{
+ const script=`const {Store}=require(${JSON.stringify(resolve('dist/main/storage.js'))});const {LibraryTransfer}=require(${JSON.stringify(resolve('dist/main/library-transfer.js'))});const s=new Store(process.argv[1]);const t=new LibraryTransfer(s);t.autosave(t.recovery().epoch,[{kind:'draft',value:'Confirmado antes da queda',base:JSON.stringify(s.read())}]);s.atomic(()=>{s.save('Não confirmado');process.kill(process.pid,'SIGKILL');});`;
+ const result=spawnSync(process.execPath,['-e',script,join(root,'data')],{encoding:'utf8'});assert.ok(result.signal||result.status!==0);const store=new Store(join(root,'data'));try{assert.equal(store.read(),'Confirmado antes da queda');assert.equal(new LibraryTransfer(store).recovery().receipt.entries[0].value,'Confirmado antes da queda');}finally{store.close();}
+ }finally{fs.rmSync(root,{recursive:true,force:true});}
+});
+test('full library export restores songs, keys, themes, program snapshots and attachments in a new folder',()=>{
+ const {root,store,service}=setup();let other;try{const song=service.confirm(fileDraft('Cifras.pro','[C]Canção'),'new',null).value;const bytes=Buffer.from('synthetic attachment');const asset=store.addAsset('fixture.png','image/png',bytes);const theme={...DEFAULT_THEME,id:'theme',title:'Tema',image:asset.sha256};store.put(contentRecord('theme',theme));const program={id:'program',title:'Culto',items:[{id:'item',title:song.title,text:song.sections[0].text,source:{kind:'song',id:song.id},theme,songSnapshot:song}]};store.put(contentRecord('program',program));const path=join(root,'biblioteca.zamar-backup');store.createBackup(path);other=new Store(join(root,'outro computador'));other.restoreBackup(path);assert.deepEqual(other.list('song'),store.list('song'));assert.deepEqual(readContent('program',other.list('program')[0]),program);assert.deepEqual(other.imageBytes(asset.sha256),bytes);assert.deepEqual(other.list('theme'),store.list('theme'));
+ }finally{other?.close();store.close();fs.rmSync(root,{recursive:true,force:true});}
+});
+test('auto-save confirms text, theme and program together and preserves new import text literally',()=>{
+ const {root,store,service}=setup();try{
+ const text=service.confirm(fileDraft('Aviso.txt','Texto [C]literal'),'new',null).value;assert.equal(text.text,'Texto [C]literal');assert.equal(service.preview({...fileDraft('Outro.txt','Texto [C]literal')})[0].reason,'content');
+ const changed={...text,text:'Texto automático'};const theme={...DEFAULT_THEME,id:'auto-theme',title:'Tema automático'};const program={id:'auto-program',title:'Culto automático',items:[{id:'auto-item',title:changed.title,text:changed.text,source:{kind:'text',id:text.id},theme}]};
+ service.autosave(service.recovery().epoch,[{kind:'text',value:changed,base:JSON.stringify(text)},{kind:'theme',value:theme,base:null},{kind:'program',value:program,base:null}]);assert.equal(readContent('text',store.list('text')[0]).text,changed.text);assert.deepEqual(readContent('program',store.list('program')[0]),program);assert.deepEqual(readContent('theme',store.list('theme')[0]),theme);assert.equal(store.getSetting('last-program'),program.id);
+ const receipt=service.recovery().receipt;assert.equal(receipt.entries.length,3);const target=service.preview(fileDraft('Aviso.txt','Texto novo'))[0];const row=store.list('text')[0];store.put({...row,data:{...row.data,text:'Mudança no mesmo milissegundo'}});assert.throws(()=>service.confirm(fileDraft('Aviso.txt','Texto novo'),'update',target),/mudou/);
+ assert.throws(()=>service.autosave(service.recovery().epoch,[{kind:'draft',value:'a',base:null},{kind:'draft',value:'b',base:null}]),/Entrada/);
+ }finally{store.close();fs.rmSync(root,{recursive:true,force:true});}
+});
