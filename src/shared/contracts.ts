@@ -7,7 +7,8 @@ import type { Song } from './songs';
 import type { EntityKind, LibraryRecord } from './models';
 export type Monitor = { id: number; label: string; primary: boolean; availableForProjection: boolean };
 export type Snapshot = { revision: number; text: string; chords?:ChordPage; theme: Theme; black: boolean; hidden: boolean; outputOpen: boolean; status: string; mode: 'closed' | 'rehearsal' | 'external' };
-export type Initial = { draft: string; dataPath: string; monitors: Monitor[]; snapshot: Snapshot };
+export type InterfaceTheme = 'dark' | 'light';
+export type Initial = { interfaceTheme: InterfaceTheme; draft: string; dataPath: string; monitors: Monitor[]; snapshot: Snapshot };
 export interface Bridge {
   selectImport():Promise<ImportDraft|null>;
   previewImport(draft:ImportDraft):Promise<Duplicate[]>;
@@ -15,6 +16,7 @@ export interface Bridge {
   recovery():Promise<{epoch:string;receipt:SaveReceipt|null}>;
   autosave(epoch:string,entries:AutoEntry[]):Promise<SaveReceipt>;
   initial(): Promise<Initial>;
+  setInterfaceTheme(theme: InterfaceTheme): Promise<void>;
   save(text: string): Promise<void>;
   present(text: string | { text:string; theme:Theme; chords?:ChordPage }): Promise<void>;
   openOutput(id: number | null): Promise<boolean>;

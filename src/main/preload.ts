@@ -8,6 +8,7 @@ const bridge: Bridge = {
   recovery:()=>invoke('recovery'),
   autosave:(epoch,entries)=>invoke('autosave',{epoch,entries}),
   initial: () => invoke('initial'),
+  setInterfaceTheme: theme => invoke('interface-theme', theme),
   save: text => invoke('save', text),
   present: text => invoke('present', text),
   openOutput: id => invoke('open-output', id),

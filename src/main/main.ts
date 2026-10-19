@@ -80,11 +80,15 @@ app.whenReady().then(async () => {
       requestPayload(request);
       if (event.senderFrame !== event.sender.mainFrame || ![operator?.webContents.id, output?.webContents.id].includes(event.sender.id)) throw new Error('Origem inválida');
       const privateAccess = event.sender.id === operator?.webContents.id;
-      return { draft: privateAccess ? store.read() : '', dataPath: privateAccess ? dataPath : '', monitors: privateAccess ? monitors() : [], snapshot: state };
+      return { interfaceTheme: store.getSetting('interface-theme') === 'light' ? 'light' : 'dark', draft: privateAccess ? store.read() : '', dataPath: privateAccess ? dataPath : '', monitors: privateAccess ? monitors() : [], snapshot: state };
     });
     const handle = (name: string, action: (payload: unknown) => unknown) => ipcMain.handle(name, (event, request: unknown) => {
       if (event.sender.id !== operator?.webContents.id || event.senderFrame !== event.sender.mainFrame) throw new Error('Comando exclusivo do operador');
       return action(requestPayload(request));
+    });
+    handle('interface-theme', value => {
+      if (value !== 'dark' && value !== 'light') throw new Error('Tema da interface inválido.');
+      store.setSetting('interface-theme', value);
     });
     const transfer=new LibraryTransfer(store);
     handle('import-select',async()=>{const selected=await dialog.showOpenDialog(operator!,{title:'Importar texto ou cifra',properties:['openFile'],filters:[{name:'Texto e cifras UTF-8',extensions:['txt','pro','chordpro']}]});return selected.canceled||!selected.filePaths[0]?null:transfer.select(selected.filePaths[0]);});

@@ -38,6 +38,26 @@ const { join, resolve } = require('node:path');
   assert.equal(await app.evaluate(({app})=>app.commandLine.hasSwitch('no-sandbox')),false,'Tests must keep Chromium sandbox enabled');
   let page = await app.firstWindow();
   await page.getByRole('heading', {name:'Sua mensagem em destaque.'}).waitFor();
+  // Interface appearance is persisted independently of the public presentation.
+  const originalSnapshot = (await page.evaluate(() => window.zamar.initial())).snapshot;
+  await page.getByRole('button', {name:'Ativar tema claro',exact:true}).click();
+  await page.waitForFunction(() => document.documentElement.dataset.theme === 'light');
+  assert.equal((await page.evaluate(() => window.zamar.initial())).interfaceTheme, 'light');
+  assert.deepEqual((await page.evaluate(() => window.zamar.initial())).snapshot, originalSnapshot);
+  const palette = await page.evaluate(() => {
+    const styles = getComputedStyle(document.documentElement);
+    return {scheme:styles.colorScheme,background:styles.backgroundColor,text:styles.color};
+  });
+  assert.equal(palette.scheme, 'light');
+  assert.equal(palette.background, 'rgb(234, 234, 234)');
+  assert.equal(palette.text, 'rgb(13, 13, 13)');
+  await assert.rejects(page.evaluate(() => window.zamar.setInterfaceTheme('invalid')));
+  await page.reload();
+  await page.getByRole('button', {name:'Ativar tema escuro',exact:true}).waitFor();
+  assert.equal(await page.evaluate(() => document.documentElement.dataset.theme), 'light');
+  await page.getByRole('button', {name:'Ativar tema escuro',exact:true}).click();
+  await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');
+  assert.equal((await page.evaluate(() => window.zamar.initial())).interfaceTheme, 'dark');
   if((process.env.ZAMAR_SMOKE_FLOW==='qualification'||process.argv.includes('--qualification'))){({app,page}=await require('./qualification-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
   if(process.env.ZAMAR_SMOKE_FLOW==='transfer'){({app,page}=await require('./transfer-flow.cjs')({app,page,launch,directory}));console.log(`Format: ${format}`);return;}
   const text = '[C]Canção de teste\n[G/B]Coração e fé 🎵';

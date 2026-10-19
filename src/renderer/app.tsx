@@ -25,6 +25,17 @@ function Modal({ title, children, close }: { title: string; children: React.Reac
   return <dialog ref={ref} aria-labelledby="dialog-title" onCancel={event=>{event.preventDefault();close();}}><div className="section-heading"><h2 id="dialog-title">{title}</h2><button onClick={close} aria-label="Fechar janela">Fechar</button></div>{children}</dialog>;
 }
 function App() {
+  const [interfaceTheme,setInterfaceTheme] = useState<'dark'|'light'>('dark');
+  const [changingInterfaceTheme,setChangingInterfaceTheme] = useState(false);
+  useEffect(() => { if (!projection) document.documentElement.dataset.theme = interfaceTheme; }, [interfaceTheme]);
+  async function toggleInterfaceTheme() {
+    const next = interfaceTheme === 'dark' ? 'light' : 'dark';
+    setChangingInterfaceTheme(true);
+    try { await window.zamar.setInterfaceTheme(next); setInterfaceTheme(next); }
+    catch (error) { setMessage(String(error)); }
+    finally { setChangingInterfaceTheme(false); }
+  }
+
   const [autoEpoch,setAutoEpoch]=useState<string|null>(null);
   const [recovery,setRecovery]=useState<SaveReceipt|null>(null);
   const [queueSong,setQueueSong]=useState<Song|null>(null);
@@ -124,7 +135,7 @@ function App() {
       update(next);
       if (!projection) window.zamar.initial().then(data => { setMonitors(data.monitors); setMonitor(current => current === 'rehearsal' || data.monitors.some(d => String(d.id) === current && d.availableForProjection) ? current : 'rehearsal'); }).catch(error => setMessage(String(error)));
     });
-    window.zamar.initial().then(data => { setDraft(data.draft); setSaved(data.draft); setPath(data.dataPath); setMonitors(data.monitors); setMonitor(String(data.monitors.find(d => d.availableForProjection)?.id ?? 'rehearsal')); update(data.snapshot); setReady(true); }).catch(error => setMessage(String(error)));
+    window.zamar.initial().then(data => { setInterfaceTheme(data.interfaceTheme); setDraft(data.draft); setSaved(data.draft); setPath(data.dataPath); setMonitors(data.monitors); setMonitor(String(data.monitors.find(d => d.availableForProjection)?.id ?? 'rehearsal')); update(data.snapshot); setReady(true); }).catch(error => setMessage(String(error)));
     return unsubscribe;
   }, []);
   useEffect(() => { setPresenterView(state.outputOpen); }, [state.outputOpen]);
@@ -169,7 +180,7 @@ function App() {
   });
   if (projection) return <main className="projection">{!state.black && <Slide text={state.hidden?'':state.text} theme={state.theme} chords={state.hidden?undefined:state.chords}/>}</main>;
   return <main className={`operator ${presenterView && state.outputOpen ? 'presenting' : ''}`}>
-    <header className="app-header"><a className="brand" href="#main-content" aria-label="Zamar Sync — ir ao conteúdo"><span className="brand-mark">Z</span><span>ZAMAR<span className="brand-light">SYNC</span></span></a><div className="header-caption"><h1>Sua mensagem em destaque.</h1><span>Espaço de apresentação</span></div><div className="header-actions"><span className="badge">● Offline</span><button className="quiet" onClick={() => setModal('help')}>Guia rápido</button><button className="quiet" onClick={() => setModal('settings')}>Configurações</button></div></header>
+    <header className="app-header"><a className="brand" href="#main-content" aria-label="Zamar Sync — ir ao conteúdo"><span className="brand-mark">Z</span><span>ZAMAR<span className="brand-light">SYNC</span></span></a><div className="header-caption"><h1>Sua mensagem em destaque.</h1><span>Espaço de apresentação</span></div><div className="header-actions"><span className="badge">● Offline</span><button className="quiet" disabled={!ready || changingInterfaceTheme} onClick={() => void toggleInterfaceTheme()} aria-label={interfaceTheme === 'dark' ? 'Ativar tema claro' : 'Ativar tema escuro'}>{interfaceTheme === 'dark' ? 'Tema claro' : 'Tema escuro'}</button><button className="quiet" onClick={() => setModal('help')}>Guia rápido</button><button className="quiet" onClick={() => setModal('settings')}>Configurações</button></div></header>
     <section className="output-bar" aria-label="Controle da saída"><span className={`status-dot ${state.outputOpen ? 'connected' : ''}`}/><label htmlFor="monitor">Destino da apresentação</label><select id="monitor" disabled={state.outputOpen} value={monitor} onChange={e => setMonitor(e.target.value)}><option value="rehearsal">Ensaio neste monitor · sem projeção externa</option>{monitors.filter(d => d.availableForProjection).map(d => <option key={d.id} value={d.id}>{d.label}</option>)}</select><button disabled={!ready || state.outputOpen} onClick={() => run(async () => { const opened = await window.zamar.openOutput(monitor === 'rehearsal' ? null : Number(monitor)); if (!opened) throw new Error('Uma apresentação já está aberta. Encerre antes de mudar o destino.'); }, monitor === 'rehearsal' ? 'Ensaio iniciado; controles disponíveis' : 'Apresentação iniciada no datashow')}>Iniciar apresentação</button><button className="quiet" disabled={!state.outputOpen} onClick={() => run(() => window.zamar.closeOutput(), 'Apresentação encerrada')}>Encerrar apresentação</button>{state.outputOpen && <button className="quiet" onClick={() => setPresenterView(value => !value)}>{presenterView ? 'Editar conteúdo' : 'Modo apresentador'}</button>}<span className="output-label">{state.mode === 'rehearsal' ? 'Ensaio local' : state.mode === 'external' ? 'Datashow ativo' : 'Apresentação encerrada'}</span></section>
     <div className="presentation-notice" aria-live="polite">{state.status}<span> Seus controles ficam neste monitor; a projeção em tela cheia usa somente uma tela separada.</span>{(state.mode === 'rehearsal' || !monitors.some(d => d.availableForProjection)) && <span> Para mostrar apenas o conteúdo no datashow, conecte-o e selecione Estender nas configurações de telas (Windows: Win+P → Estender). No modo Duplicar, as duas telas mostram a mesma imagem.</span>}</div>
     <div className="session-notice"><span className="prototype-tag">Biblioteca offline</span><span>Edições válidas são salvas automaticamente após uma pausa. Programações guardam cópias independentes. Confira o indicador antes de fechar.</span></div>

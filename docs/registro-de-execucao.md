@@ -242,3 +242,12 @@
 **Contagem final:** 44/44 tarefas encerradas; zero pendentes no plano. Validações físicas/humanas encerradas por aceite, execução técnica identificada pelos relatórios e verificações. Resultados finais e hashes em etapa-10-entrega.md.
 
 **Verificação final:** 45 casos de domínio aprovados; upgrade/retorno/restauração aprovados; suíte gráfica completa nos três formatos Linux finais aprovada com sandbox e contexto offline. ZIP/CRC e gzip/tar íntegros; guias/inventário/manifesto presentes. A sincronização do teste de foco aguarda o frame da atualização, sem mudança adicional do aplicativo. Seis arquivos 0.9.0 removidos; somente artefatos 1.0.0 mantidos e `release/data` preservada.
+
+
+## 19/10/2026 — Temas claro e escuro da interface
+
+**Objetivo:** manter a paleta neutra escura e permitir alternância para uma paleta clara pelo cabeçalho.
+
+**Implementação:** cores da interface centralizadas em variáveis CSS, com fundos claros, texto escuro e destaque neutro na variante clara. Botão acessível indica a próxima ação. Preferência `interface-theme` persistida no SQLite existente, sem migração de esquema, por IPC validado e exclusivo do operador; recuperada na inicialização. Falhas de gravação são exibidas e preservam a seleção anterior. As cores dos slides e o estado da apresentação permanecem independentes.
+
+**Verificação:** tipos e compilação aprovados; teste gráfico Linux em modo de desenvolvimento com sandbox habilitado confirma alternância, recuperação da preferência após recarga, rejeição de valor inválido e preservação do snapshot público. Qualificação de teclado, zoom e contraste do tema escuro aprovada. Pacotes em `release` ainda correspondem à entrega anterior e precisam ser regenerados para distribuir esta melhoria.

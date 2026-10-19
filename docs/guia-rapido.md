@@ -6,6 +6,10 @@
 - Linux: autorize a execução do AppImage e abra-o. Sem FUSE, extraia o tar.gz inteiro e abra `zamar-sync`. Também é possível executar o AppImage com `--appimage-extract-and-run`.
 - Guarde e mova a pasta `data` junto com o aplicativo. Feche o app antes de copiar dados ou retirar um pendrive. Não precisa instalar Java, Node.js ou banco.
 
+## Tema da interface
+
+No cabeçalho, clique em **Tema claro** ou **Tema escuro** para alternar a aparência. O tema escuro é o padrão; a escolha fica salva na pasta de dados do aplicativo e é recuperada na próxima abertura. Essa escolha altera os controles do operador; as cores dos slides continuam definidas no tema da apresentação.
+
 ## Apresentar em poucos passos
 
 1. Com uma tela, escolha **Ensaio neste monitor**. Com datashow, configure as telas em **Estender** e escolha o destino externo. Windows: Win+P → Estender; Linux: configurações de telas. Duplicar/espelhar mostra a mesma imagem nas duas telas.
