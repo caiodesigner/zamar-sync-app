@@ -59,6 +59,7 @@ const { join, resolve } = require('node:path');
   await page.waitForFunction(() => document.documentElement.dataset.theme === 'dark');
   assert.equal((await page.evaluate(() => window.zamar.initial())).interfaceTheme, 'dark');
   if((process.env.ZAMAR_SMOKE_FLOW==='qualification'||process.argv.includes('--qualification'))){({app,page}=await require('./qualification-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
+  if(process.env.ZAMAR_SMOKE_FLOW==='columns'){({app,page}=await require('./columns-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
   if(process.env.ZAMAR_SMOKE_FLOW==='exports'){({app,page}=await require('./song-export-flow.cjs')({app,page,directory}));console.log(`Format: ${format}`);return;}
   if(process.env.ZAMAR_SMOKE_FLOW==='library'){({app,page}=await require('./song-library-flow.cjs')({app,page}));console.log(`Format: ${format}`);return;}
   if(process.env.ZAMAR_SMOKE_FLOW==='transfer'){({app,page}=await require('./transfer-flow.cjs')({app,page,launch,directory}));console.log(`Format: ${format}`);return;}

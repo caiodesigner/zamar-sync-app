@@ -76,3 +76,12 @@ Em **Importar texto ou cifra → Selecionar biblioteca JSON**, selecione um cat�
 **Exportar letras de músicas** inclui todas as músicas sem acordes. **Exportar cifras de músicas** inclui apenas músicas que têm acordes, com letra, cifras e tons preservados. Para recuperar esses catálogos, use **Importar texto ou cifra → Selecionar biblioteca JSON**. IDs existentes não são sobrescritos automaticamente. A exportação não altera músicas locais nem atualiza o JSON do repositório.
 
 Na aba **Bíblia**, importe SQL/SQLite, selecione a versão padrão ou remova uma tradução. Para substituir, cadastre o novo arquivo e escolha substituir a versão desejada. Não há exportação de Bíblia na interface. A opção **Restaurar backup** serve para backups completos anteriores; as cópias internas de proteção continuam automáticas.
+
+
+## Letras e cifras em duas colunas
+
+Escolha a música na aba **Músicas** e, no editor, altere **Colunas desta música** para **2 colunas**. Clique em **Salvar música**, confira a prévia e use **Apresentar** para mudar a projeção ativa. Essa escolha é individual: as outras músicas continuam com sua própria configuração, por padrão uma coluna. O seletor não fica mais no editor de temas.
+
+A leitura segue de cima para baixo na coluna esquerda e depois na direita. Quebras longas e paginação consideram a largura de cada coluna; cifras continuam acima das palavras correspondentes. Blocos manuais são preservados.
+
+Ao preparar um item da programação, use **Colunas desta cópia** para ajustar somente aquele item e depois salve a programação. A configuração original da música na biblioteca e a saída ativa são preservadas. Uma nova cópia herda a escolha da música; atualizar explicitamente pela origem busca a configuração salva na biblioteca.

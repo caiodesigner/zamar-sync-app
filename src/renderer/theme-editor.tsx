@@ -12,6 +12,6 @@ export function ThemeEditor({theme,change,save,importImage}:{theme:Theme;change:
  <label className="field">Alinhamento<select aria-label="Alinhamento" value={theme.align} onChange={e=>patch({align:e.target.value as Theme['align']})}><option value="left">Esquerda</option><option value="center">Centro</option><option value="right">Direita</option></select></label>
  <label className="field">Escurecer imagem<input aria-label="Escurecer imagem" type="range" min={0} max={0.8} step={0.05} value={theme.overlay} onChange={e=>patch({overlay:Number(e.target.value)})}/></label></div>
  <div className="editor-actions"><button onClick={importImage}>Importar imagem de fundo</button><button disabled={!theme.image} onClick={()=>patch({image:null})}>Remover imagem</button></div><p className="hint">PNG ou JPEG local, até 10 MiB. A imagem é copiada para seus dados; o original pode ser movido depois.</p>
- <div className="preview theme-preview" style={{aspectRatio:theme.ratio==='4:3'?'4 / 3':'16 / 9'}}><Slide text="Sua mensagem em destaque" theme={theme}/></div>
+ <div className="preview theme-preview" style={{aspectRatio:theme.ratio==='4:3'?'4 / 3':'16 / 9'}}><Slide text="Sua mensagem em destaque" theme={{...theme,columns:1}}/></div>
  <p className="hint">Edições válidas são salvas automaticamente na biblioteca. Salvar tema também o escolhe para a preparação. A saída ativa só muda ao apresentar novamente.</p><button className="primary" onClick={save}>Salvar tema</button></>;
 }

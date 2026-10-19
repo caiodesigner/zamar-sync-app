@@ -1,14 +1,14 @@
 import { validateSong, type Song } from './songs';
 import { validatePassage, type Passage } from './bible';
 import { type EntityKind, type LibraryRecord, validateRecord } from './models';
-export type Theme = { id:string; title:string; ratio:'16:9'|'4:3'; background:string; foreground:string; image:string|null; overlay:number; font:'mono'|'sans'; fontSize:number; margin:number; align:'left'|'center'|'right' };
+export type Theme = { id:string; title:string; ratio:'16:9'|'4:3'; background:string; foreground:string; image:string|null; overlay:number; font:'mono'|'sans'; fontSize:number; margin:number; align:'left'|'center'|'right'; columns?:1|2 };
 export type TextContent = { id:string; title:string; text:string };
 export type ProgramItem = { id:string; title:string; text:string; source:{kind:'song'|'text'|'bible';id:string}|null; theme:Theme; scripture?:Passage; songSnapshot?:Song };
 export type Program = { id:string; title:string; items:ProgramItem[] };
 export type ContentKind = 'text'|'theme'|'program';
 export type Content = TextContent|Theme|Program;
 export type Catalog = { texts:TextContent[]; themes:Theme[]; programs:Program[]; lastProgram:string|null; skipped:number };
-export const DEFAULT_THEME:Theme = {id:'default',title:'Padrão',ratio:'16:9',background:'#000000',foreground:'#ffffff',image:null,overlay:0.4,font:'mono',fontSize:56,margin:6,align:'center'};
+export const DEFAULT_THEME:Theme = {id:'default',title:'Padrão',ratio:'16:9',background:'#000000',foreground:'#ffffff',image:null,overlay:0.4,font:'mono',fontSize:56,margin:6,align:'center',columns:1};
 const validId=(v:unknown):v is string=>typeof v==='string' && /^[a-zA-Z0-9_-]{1,100}$/.test(v);
 function header(v:unknown): asserts v is {id:string;title:string} {
  if(!v || typeof v!=='object' || !validId((v as Content).id) || typeof (v as Content).title!=='string' || !(v as Content).title.trim() || (v as Content).title.length>200) throw new Error('Informe um título válido, de até 200 caracteres.');
@@ -16,8 +16,9 @@ function header(v:unknown): asserts v is {id:string;title:string} {
 export function contentText(v:unknown):string { if(typeof v!=='string' || v.length>100000) throw new Error('Texto inválido ou acima de 100 mil caracteres.');return v; }
 export function validateTheme(value:unknown):Theme {
  header(value);const t=value as Theme;
+ if(t.columns!==undefined && t.columns!==1 && t.columns!==2)throw new Error('Escolha uma ou duas colunas.');
  if(!['16:9','4:3'].includes(t.ratio) || typeof t.background!=='string' || !/^#[0-9a-f]{6}$/i.test(t.background) || typeof t.foreground!=='string' || !/^#[0-9a-f]{6}$/i.test(t.foreground) || (t.image!==null && (typeof t.image!=='string' || !/^[a-f0-9]{64}$/.test(t.image))) || !['mono','sans'].includes(t.font) || !['left','center','right'].includes(t.align) || !Number.isFinite(t.fontSize) || t.fontSize<32 || t.fontSize>96 || !Number.isFinite(t.margin) || t.margin<5 || t.margin>15 || !Number.isFinite(t.overlay) || t.overlay<0 || t.overlay>0.8) throw new Error('Tema inválido. Confira cores, proporção, fonte e margens.');
- return {id:t.id,title:t.title.trim(),ratio:t.ratio,background:t.background,foreground:t.foreground,image:t.image,overlay:t.overlay,font:t.font,fontSize:t.fontSize,margin:t.margin,align:t.align};
+ return {id:t.id,title:t.title.trim(),ratio:t.ratio,background:t.background,foreground:t.foreground,image:t.image,overlay:t.overlay,font:t.font,fontSize:t.fontSize,margin:t.margin,align:t.align,columns:t.columns??1};
 }
 export function validateTextContent(value:unknown):TextContent {header(value);const t=value as TextContent;return {id:t.id,title:t.title.trim(),text:contentText(t.text)};}
 export function validateItem(value:unknown):ProgramItem {
@@ -44,6 +45,7 @@ export function readContent(kind:ContentKind,record:LibraryRecord):Content {retu
 export function slideGeometry(theme:Theme) {
  const width=1600;const height=theme.ratio==='4:3'?1200:900;
  const x=width*theme.margin/100;const y=height*theme.margin/100;
- return {width,height,x,y,innerWidth:width-2*x,innerHeight:height-2*y};
+ const columnCount=theme.columns===2?2:1;const columnGap=columnCount===2?64:0;
+ return {width,height,x,y,innerWidth:width-2*x,innerHeight:height-2*y,columnCount,columnGap,columnWidth:(width-2*x-columnGap)/columnCount};
 }
 export const imageUrl=(hash:string)=>`zamar-asset://image/${hash}`;

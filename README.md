@@ -119,3 +119,10 @@ O importador mantém sua regra de preservar IDs já cadastrados: importar letras
 Bíblias são gerenciadas na aba Bíblia: importar SQL/SQLite, consultar, substituir pelo cadastro de importação, definir versão padrão e remover. Não há exportação de Bíblia na interface. Backups internos de proteção continuam completos para permitir recuperação de operações; **Restaurar backup** permanece disponível para arquivos completos anteriores. Os dois botões de exportação completa foram substituídos pelos de letras e cifras.
 
 O JSON exportado não atualiza automaticamente `library/encontro/songs.json` ou o GitHub. Para preservar todo o estado ao mover/atualizar, feche o app e copie a pasta `data` completa junto com ele.
+
+
+## Uma ou duas colunas por música
+
+Selecione a música na biblioteca e, no editor, use **Colunas desta música → 1 coluna / 2 colunas**. Salve a música e confira a prévia. A escolha vale somente para essa música, em letra ou cifra, e não modifica o tema nem as demais músicas. Músicas sem escolha explícita usam uma coluna. Para mudar a saída ativa, apresente novamente.
+
+Em uma cópia da programação, use **Colunas desta cópia** e salve a programação; a música da biblioteca permanece intacta. Temas compartilhados cuidam apenas da aparência: não há mais seletor de colunas no editor de temas.

@@ -37,7 +37,7 @@ export function chordUnits(line:ChordLine):ChordUnit[] {
  for(const s of [...segments,{segment:'',index:line.lyric.length}]){const tokens=byPosition.get(s.index)??[];if(s.segment||tokens.length)units.push({lyric:s.segment,tokens,cells:Math.max(/[^\u0000-\u024f\u0300-\u036f]/u.test(s.segment)?2:s.segment?1:0,tokens.length?[...tokens.join(' ')].reduce((n,c)=>n+(/[^\u0000-\u024f\u0300-\u036f]/u.test(c)?2:1),0)+1:0)});}return units;
 }
 export function chordPages(text:string,m:Music,theme:Theme):ChordPage[] {
- const {innerWidth,innerHeight}=slideGeometry(theme);const columns=Math.max(8,Math.floor(innerWidth/(theme.fontSize*(theme.font==='mono'?.72:1))));const limit=Math.max(1,Math.floor(innerHeight/(theme.fontSize*2.6)));
+ const {columnWidth,innerHeight,columnCount}=slideGeometry(theme);const columns=Math.max(8,Math.floor(columnWidth/(theme.fontSize*(theme.font==='mono'?.72:1))));const limit=Math.max(1,Math.floor(innerHeight/(theme.fontSize*2.6)))*columnCount;
  const pages:ChordPage[]=[];let rows:ChordLine[]=[];const flush=()=>{if(rows.length)pages.push({lines:rows});rows=[];};
  for(const line of parseChords(text).lines){if(!line.lyric.trim()&&!line.anchors.length||line.lyric.trim()==='---'&&!line.anchors.length){flush();continue;}
  const transposed={...line,anchors:line.anchors.map(a=>({...a,token:transpose(a.token,m).token}))};let row:ChordLine={lyric:'',anchors:[]},cells=0;

@@ -297,3 +297,25 @@
 **Validação:** tipos/build e testes de domínio aprovados, incluindo exclusão de Bíblias/anexos, remoção de acordes somente no arquivo de letras, seleção por presença de cifras, preservação dos tons e dados locais, compatibilidade do catálogo e coleção de cifras vazia. Teste gráfico específico aprovou os dois botões, os JSONs gerados e dados locais intactos. Guias atualizados; release precisa ser regenerado.
 
 **Regressão final desta revisão:** suíte gráfica completa Linux em modo de desenvolvimento aprovada, incluindo CRUD/consulta de Bíblia, letras, cifras, temas, recuperação, teclado e zoom, com sandbox habilitado e dados temporários.
+
+
+## 19/10/2026 — Apresentação com até duas colunas
+
+**Solicitação:** permitir formatação de letras/cifras em uma ou duas colunas e indicar a localização do controle.
+
+**Implementação:** campo Colunas do texto no editor de temas, limitado a 1/2; ausência em temas antigos normalizada para 1 sem migração de banco. Geometria compartilhada calcula largura por coluna e intervalo seguro. Paginação de letras/cifras respeita largura de coluna e capacidade de duas colunas; blocos manuais continuam separados. Renderizador comum de prévia/monitor/saída distribui linhas da esquerda para direita sem separar cifra de sua letra. Preferência persiste no tema e em cópias de programação.
+
+**Validação:** tipos/build e suíte de domínio aprovados. Testes específicos verificam limites 1/2, compatibilidade com temas antigos, roundtrip do tema, preservação da ordem/texto, largura de coluna, cifras/transposição e capacidades em 16:9/4:3 com diferentes fontes/tamanhos. Teste gráfico Linux aprovou edição/salvamento, distribuição em duas colunas sem sobreposição, prévia ao vivo com letras/cifras e recuperação do tema após recarga. Sem nova validação em monitores físicos. Pacotes release precisam ser regenerados.
+
+**Regressão final:** suíte gráfica completa Linux aprovada após a mudança do renderizador, incluindo saída externa simulada, letras, Bíblia, cifras, temas, recuperação, teclado e zoom.
+
+
+## 19/10/2026 — Colunas individuais por música
+
+**Correção de escopo:** a escolha de duas colunas deve atingir apenas a música desejada, não todos os conteúdos que compartilham o tema.
+
+**Implementação:** seletor Colunas desta música no editor da biblioteca, persistido em `Song.columns` e no registro local. Ausência do campo mantém uma coluna. O seletor foi removido do editor de temas; o layout efetivo é derivado da música antes de paginar, renderizar ou apresentar, ignorando eventual preferência antiga do tema compartilhado. Letras e cifras da mesma música compartilham a escolha individual. Textos/Bíblia continuam em uma coluna. Cópias de programação preservam a escolha no snapshot, com seletor Colunas desta cópia para ajustes independentes. Importação/exportação JSON e backups preservam o campo pelo domínio existente. Sem migração de banco nem alteração em massa dos cadastros.
+
+**Verificação:** tipos/build e suíte de domínio aprovados, incluindo validação 1/2, registros independentes, compatibilidade com músicas anteriores e snapshots mistos na programação. O teste gráfico específico verifica duas músicas com o mesmo tema, edição/salvamento individual, preservação da saída até Apresentar, cifras em duas colunas e persistência após recarga. Pacotes release precisam ser regenerados.
+
+**Resultado final:** teste gráfico individual aprovado com duas músicas no mesmo tema e preferências persistidas independentes. Regressão gráfica completa Linux aprovada após a correção, incluindo programação, letras/cifras, Bíblia, recuperação e teclado/zoom. O roteiro do teste individual encerra o ensaio antes de recarregar a biblioteca, respeitando o modo apresentador.

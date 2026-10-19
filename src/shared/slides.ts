@@ -4,8 +4,8 @@ import { DEFAULT_THEME, slideGeometry, type Theme } from './content';
 const graphemes = new Intl.Segmenter('pt-BR', { granularity:'grapheme' });
 export function slidesForText(text: string, theme:Theme = DEFAULT_THEME, reserveLines=0): string[] {
   const geometry = slideGeometry(theme);
-  const columns = Math.max(8,Math.min(36,Math.floor(geometry.innerWidth/(theme.fontSize*(theme.font==='mono'?0.72:1)))));
-  const limit = Math.max(1,Math.min(8,Math.floor(geometry.innerHeight/(theme.fontSize*1.25)))-Math.max(0,reserveLines));
+  const columns = Math.max(8,Math.min(36,Math.floor(geometry.columnWidth/(theme.fontSize*(theme.font==='mono'?0.72:1)))));
+  const limit = Math.max(1,Math.min(8,Math.floor(geometry.innerHeight/(theme.fontSize*1.25)))-Math.max(0,reserveLines))*geometry.columnCount;
   const pages: string[] = [];
   for (const part of text.replace(/\r\n?/g,'\n').replace(/\t/g,'    ').replace(/^[ \t]*---[ \t]*$/gm,'\n').split(/\n[ \t]*\n(?:[ \t]*\n)*/)) {
     let lines: string[] = [];

@@ -1,0 +1,20 @@
+const assert=require('node:assert/strict');
+module.exports=async({app,page})=>{
+ const base={id:'a',title:'Música A',author:'',archived:false,sections:[{id:'v',label:'Verso',text:Array.from({length:8},(_,i)=>`Linha ${i+1}`).join('\n')}],sequence:['v']};
+ await page.evaluate(async song=>{await window.zamar.saveSong(song);await window.zamar.saveSong({...song,id:'b',title:'Música B'});},base);
+ await page.evaluate(()=>window.zamar.closeOutput());await page.reload();await page.getByRole('heading',{name:'Sua mensagem em destaque.',exact:true}).waitFor();
+ const choose=async title=>page.locator('.library-item').filter({hasText:title}).click();
+ await choose('Música A');await page.getByLabel('Colunas desta música',{exact:true}).selectOption('2');await page.getByRole('button',{name:'Salvar música',exact:true}).click();
+ await page.waitForFunction(async()=>(await window.zamar.listSongs()).songs.find(s=>s.id==='a')?.columns===2);
+ const prepared=page.locator('.prepared .slide-column');assert.equal(await prepared.count(),2);assert.equal(await prepared.nth(0).textContent(),'Linha 1\nLinha 2\nLinha 3\nLinha 4');assert.equal(await prepared.nth(1).textContent(),'Linha 5\nLinha 6\nLinha 7\nLinha 8');
+ await page.getByRole('button',{name:'Editar tema',exact:true}).click();assert.equal(await page.getByLabel('Colunas do texto',{exact:true}).count(),0);await page.getByRole('button',{name:'Fechar janela',exact:true}).click();
+ await page.getByRole('button',{name:'Iniciar apresentação',exact:true}).click();await page.getByRole('button',{name:'Apresentar',exact:true}).click();
+ await page.waitForFunction(()=>document.querySelector('.live-preview .slide-columns')?.getAttribute('data-columns')==='2');
+ await page.getByRole('button',{name:'Editar conteúdo',exact:true}).click();await choose('Música B');assert.equal(await page.getByLabel('Colunas desta música',{exact:true}).inputValue(),'1');assert.equal(await prepared.count(),1);
+ assert.equal((await page.evaluate(()=>window.zamar.initial())).snapshot.theme.columns,2);
+ await page.getByRole('button',{name:'Apresentar',exact:true}).click();await page.waitForFunction(()=>document.querySelector('.live-preview .slide-columns')?.getAttribute('data-columns')==='1');
+ if(await page.getByRole('button',{name:'Editar conteúdo',exact:true}).count())await page.getByRole('button',{name:'Editar conteúdo',exact:true}).click();await choose('Música A');await page.getByLabel('Letra da seção',{exact:true}).fill('[C]Linha um\n[G]Linha dois\n[Am]Linha três\n[F]Linha quatro');await page.getByLabel('Exibição da música',{exact:true}).selectOption('chords');await page.getByRole('button',{name:'Salvar música',exact:true}).click();
+ await page.waitForFunction(async()=>(await window.zamar.listSongs()).songs.find(s=>s.id==='a')?.music?.mode==='chords');assert.equal(await prepared.count(),2);assert.equal(await prepared.nth(0).locator('.chord-row').count(),2);assert.equal(await prepared.nth(1).locator('.chord-row').count(),2);
+ await page.evaluate(()=>window.zamar.closeOutput());await page.reload();await page.getByRole('heading',{name:'Sua mensagem em destaque.',exact:true}).waitFor();await choose('Música A');assert.equal(await page.getByLabel('Colunas desta música',{exact:true}).inputValue(),'2');await choose('Música B');assert.equal(await page.getByLabel('Colunas desta música',{exact:true}).inputValue(),'1');
+ console.log('PASS: per-song columns, shared theme isolation, explicit presentation, chord alignment and persisted independent choices.');return {app,page};
+};
